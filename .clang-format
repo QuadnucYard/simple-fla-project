@@ -1,0 +1,13 @@
+IndentWidth: 4
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AlwaysBreakTemplateDeclarations: Leave
+ColumnLimit: 100
+InsertNewlineAtEOF: true
+PointerAlignment: Left
+ReflowComments: true
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1

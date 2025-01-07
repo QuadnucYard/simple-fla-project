@@ -120,7 +120,9 @@ void Simulator::operator()(std::string_view input) {
         out << "---------------------------------------------\n";
     };
 
-    print_state();
+    if (verbose) {
+        print_state();
+    }
 
     while (!tm.is_final(state)) {
         for (size_t i = 0; i < tm.tape_num; i++) {
@@ -132,15 +134,19 @@ void Simulator::operator()(std::string_view input) {
             for (size_t i = 0; i < tm.tape_num; i++) {
                 tapes[i].write(tr->new_symbols[i], tr->moves[i]);
             }
-            print_state();
+            if (verbose) {
+                print_state();
+            }
         } else {
-            std::cout << "no trans\n";
-            return;
-        }
-        if (step >= 100) {
             break;
         }
     }
+
+    // print final tape result
+    for (size_t i = 0; i < tapes[0].tape.size(); i++) {
+        out << tapes[0].tape[i];
+    }
+    out << "\n";
 }
 
 } // namespace fla::tm

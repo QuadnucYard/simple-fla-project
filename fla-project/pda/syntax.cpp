@@ -30,7 +30,6 @@ Pda Parser::parse() {
 
     Pda pda;
     while (auto line = scanner.next_line()) {
-        std::cout << "line: " << *line << "\n";
         if (svmatch match; std::regex_search(line->begin(), line->end(), match, q_regex)) {
             for (auto q : comma_separated(match[1])) {
                 pda.states.insert(std::string{q});

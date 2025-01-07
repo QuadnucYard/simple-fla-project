@@ -1,3 +1,5 @@
+add_rules("mode.debug", "mode.release")
+
 set_plat("mingw")
 set_toolchains("llvm")
 set_languages("c++17")

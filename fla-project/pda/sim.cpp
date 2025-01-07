@@ -1,6 +1,5 @@
 #include "sim.hpp"
 #include "pda.hpp"
-#include <iostream>
 #include <stack>
 
 namespace fla::pda {
@@ -23,9 +22,13 @@ bool Simulator::operator()(std::string_view input) {
             for (auto z : tr->push_symbols) {
                 stack.push(z);
             }
-            std::cout << "|- " << state << "\n";
+            if (verbose) {
+                out << "|- " << state << "\n";
+            }
         } else {
-            std::cout << "no trans for " << state << ", " << c << ", " << top << "\n";
+            if (verbose) {
+                out << "no trans for " << state << ", " << c << ", " << top << "\n";
+            }
             return false;
         }
     }

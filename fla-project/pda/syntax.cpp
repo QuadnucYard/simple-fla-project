@@ -19,13 +19,13 @@ Symbol as_symbol(std::string_view s) {
 Pda Parser::parse() {
     using svmatch = std::match_results<std::string_view::const_iterator>;
 
-    static const std::regex q_regex{R"(^#Q *= *\{(.+)\}$)"};
-    static const std::regex s_regex{R"(^#S *= *\{(.+)\}$)"};
-    static const std::regex g_regex{R"(^#G *= *\{(.+)\}$)"};
-    static const std::regex q0_regex{R"(^#q0 *= *(\w+)$)"};
-    static const std::regex z0_regex{R"(^#z0 *= *(\w+)$)"};
-    static const std::regex f_regex{R"(^#F *= *\{(.+)\}$)"};
-    static const std::regex delta_regex{R"(^(\w+) +( ) +( ) +(\w+) +( +) *$)"};
+    static const std::regex q_regex{R"(^#Q\s*=\s*\{(.+)\}$)"};
+    static const std::regex s_regex{R"(^#S\s*=\s*\{(.+)\}$)"};
+    static const std::regex g_regex{R"(^#G\s*=\s*\{(.+)\}$)"};
+    static const std::regex q0_regex{R"(^#q0\s*=\s*(\w+)$)"};
+    static const std::regex z0_regex{R"(^#z0\s*=\s*(\w+)$)"};
+    static const std::regex f_regex{R"(^#F\s*=\s*\{(.+)\}$)"};
+    static const std::regex delta_regex{R"(^(\w+)\s+(\S)\s+(\S)\s+(\w+)\s+(\S+)\s*$)"};
 
     Pda pda;
     while (auto line = scanner.next_line()) {

@@ -124,7 +124,7 @@ class Command {
   private:
     void print_help() const;
 
-    void print_usage() const;
+    void print_usage(bool err) const;
 
   private:
     std::string name_;

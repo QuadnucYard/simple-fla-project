@@ -25,22 +25,37 @@ ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
         if (s.size() >= 2 && s[0] == '-') {
             decltype(args_)::const_iterator it;
             if (s[1] == '-') {
+                // long
                 auto name = s.substr(2);
                 it = std::find_if(args_.begin(), args_.end(),
                                   [&](const Arg& arg) { return arg.long_ && *arg.long_ == name; });
 
             } else {
+                // short
                 auto name = s[1];
                 it = std::find_if(args_.begin(), args_.end(), [&](const Arg& arg) {
                     return arg.short_ && *arg.short_ == name;
                 });
             }
             if (it != args_.end()) {
-                if (i + 1 < argc) {
-                    matches.args_[it->id_].values_.push_back(argv[++i]);
-                } else {
-                    matches.args_[it->id_] = {};
+                // help
+                if (it->id_ == "help") {
+                    print_help();
+                    std::exit(0);
                 }
+                // non-flag args not supported
+                matches.args_[it->id_].values_.push_back(argv[i]);
+            } else {
+                std::cerr << "\x1b[1;31m"
+                             "error:"
+                             "\x1b[0m"
+                             " unexpected argument '"
+                             "\x1b[33m"
+                          << s
+                          << "\x1b[0m"
+                             "' found\n\n";
+                print_usage(true);
+                std::exit(1);
             }
         } else {
             positionals.push_back(std::string{s});
@@ -59,24 +74,27 @@ ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
     // check requirements
     for (auto& arg : args_) {
         if (arg.is_required() && !matches.get_flag(arg.id_)) {
-            std::cout << "\x1b[1;31m"
-                         "error"
-                         "\x1b[0;1m"
-                         ": ";
+            std::cerr << "\x1b[1;31m"
+                         "error:"
+                         "\x1b[0m"
+                         " ";
             if (arg.is_positional()) {
-                std::cout << "required argument `" << arg.id_ << "` is missing";
+                std::cerr << "required argument `"
+                             "\x1b[33m"
+                          << arg.id_
+                          << "\x1b[0m"
+                             "` is missing";
             } else {
-                std::cout << "required option `" << arg.id_ << "` is missing";
+                std::cerr << "required option `"
+                             "\x1b[33m"
+                          << arg.id_
+                          << "\x1b[0m"
+                             "` is missing";
             }
-            std::cout << "\x1b[0m"
-                         "\n\n";
-            print_usage();
+            std::cerr << "\n\n";
+            print_usage(true);
             std::exit(1);
         }
-    }
-    if (matches.get_flag("help")) {
-        print_help();
-        std::exit(0);
     }
     return matches;
 }
@@ -88,18 +106,19 @@ void Command::print_help() const {
         out << *help_ << "\n";
     }
     out << "\n";
-    print_usage();
+    print_usage(false);
 }
 
-void Command::print_usage() const {
-    auto& out = std::cout;
+void Command::print_usage(bool err) const {
+    auto& out = err ? std::cerr : std::cout;
 
     std::vector<std::pair<std::string, std::string>> argument_usages;
     std::vector<std::pair<std::string, std::string>> option_usages;
 
-    out << "\x1b[0;1m"
-           "Usage: "
+    out << "\x1b[0;4;1m"
+           "Usage:"
            "\x1b[0m"
+           " "
         << name_ << "[EXE]";
     for (auto& arg : args_) {
         auto value_name = arg.get_value_name();
@@ -139,6 +158,14 @@ void Command::print_usage() const {
         }
     }
     out << "\n\n";
+    if (err) {
+        out << "For more information, try '"
+               "\x1b[0;1m"
+               "--help"
+               "\x1b[0m"
+               "'.\n\n";
+        return;
+    }
 
     if (!argument_usages.empty()) {
         out << "\x1b[0;1m"

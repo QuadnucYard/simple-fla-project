@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
+#include <iomanip>
 #include <iostream>
 #include <string_view>
 #include <vector>
@@ -64,18 +65,31 @@ std::string_view spaces(std::size_t width) {
     return SPACES.substr(0, width);
 }
 
-void Simulator::operator()(std::string_view input) {
-    out << "Input: " << input << "\n";
-    if (!tm.validate(input)) {
-        out << "==================== ERR ====================\n";
+bool Simulator::operator()(std::string_view input) {
+    if (auto res = tm.validate(input); !res) {
+        if (!verbose) {
+            err << "illegal input\n";
+            return false;
+        }
+
         // error: 'A' was not declared in the set of input symbols
         // Input: 100A1A001
         //           ^
-        out << "==================== END ====================\n";
-        return;
+        auto err_index = res.error();
+        err << "Input: " << input << "\n";
+        err << "==================== ERR ====================\n";
+        err << "error: '" << input[err_index] << "' was not declared in the set of input symbols\n";
+        err << "Input: " << input << "\n";
+        err << "       " << std::setw(err_index + 1) << '^' << "\n";
+        err << "==================== END ====================\n";
+        return false;
     }
-    out << "==================== RUN ====================\n";
+    if (verbose) {
+        out << "Input: " << input << "\n";
+        out << "==================== RUN ====================\n";
+    }
 
+    // setup tapes
     State state{tm.start_state};
     std::vector<Tape> tapes(tm.tape_num);
     for (size_t i = 0; i < tm.tape_num; i++) {
@@ -142,11 +156,20 @@ void Simulator::operator()(std::string_view input) {
         }
     }
 
+    if (verbose) {
+        out << "Result: ";
+    }
+
     // print final tape result
-    for (size_t i = 0; i < tapes[0].tape.size(); i++) {
-        out << tapes[0].tape[i];
+    for (auto c : tapes[0].tape) {
+        out << c;
     }
     out << "\n";
+
+    if (verbose) {
+        out << "==================== END ====================\n";
+    }
+    return true;
 }
 
 } // namespace fla::tm

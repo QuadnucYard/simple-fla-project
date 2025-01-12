@@ -40,8 +40,11 @@ int main(int argc, char* argv[]) {
         auto text = read_text(cli.path);
         fla::tm::Parser parser{text};
         auto tm = parser.parse();
-        fla::tm::Simulator sim{tm, std::cout, cli.verbose};
-        sim(cli.input);
+        fla::tm::Simulator sim{tm, std::cout, std::cerr, cli.verbose};
+        auto res = sim(cli.input);
+        if (!res) {
+            std::exit(1);
+        }
     } else {
         std::cerr << "error: unknown file format: " << ext << "\n";
         std::exit(1);

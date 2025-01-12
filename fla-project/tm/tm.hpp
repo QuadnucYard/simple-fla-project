@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/expected.hpp"
 #include <optional>
 #include <ostream>
 #include <string>
@@ -80,7 +81,7 @@ struct Tm {
         return std::nullopt;
     }
 
-    bool validate(std::string_view input) const;
+    expected<bool, std::size_t> validate(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Tm& tm);

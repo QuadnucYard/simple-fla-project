@@ -9,14 +9,15 @@ namespace fla::tm {
 
 class Simulator {
   public:
-    Simulator(const Tm& tm, std::ostream& out, bool verbose = false)
-        : tm{tm}, out{out}, verbose{verbose} {}
+    Simulator(const Tm& tm, std::ostream& out, std::ostream& err, bool verbose = false)
+        : tm{tm}, out{out}, err{err}, verbose{verbose} {}
 
-    void operator()(std::string_view input);
+    bool operator()(std::string_view input);
 
   private:
     const Tm& tm;
     std::ostream& out;
+    std::ostream& err;
     bool verbose;
 };
 

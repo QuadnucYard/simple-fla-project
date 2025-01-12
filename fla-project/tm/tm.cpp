@@ -1,9 +1,52 @@
 #include "tm.hpp"
+#include "../utils/str.hpp"
 #include <unordered_set>
 
 namespace fla::tm {
 
-expected<bool, std::size_t> Tm::validate(std::string_view input) const {
+expected<bool, std::vector<std::string>> Tm::validate_self() const {
+    std::vector<std::string> errors;
+    if (!has_state(start_state)) {
+        errors.push_back(concat("start state `", start_state, "` is not in the state set"));
+    }
+    for (auto&& final_state : final_states) {
+        if (!has_state(final_state)) {
+            errors.push_back(concat("final state `", final_state, "` is not in the state set"));
+        }
+    }
+    if (!has_tape_symbol(blank_symbol)) {
+        errors.push_back(concat("blank symbol `", blank_symbol, "` is not in the tape alphabet"));
+    }
+    for (auto&& t : transitions) {
+        if (!has_state(t.old_state)) {
+            errors.push_back(
+                concat("old state `", t.old_state, "` in the transition is not in the state set"));
+        }
+        if (!has_state(t.new_state)) {
+            errors.push_back(
+                concat("new state `", t.new_state, "` in the transition is not in the state set"));
+        }
+        for (auto sym : t.old_symbols) {
+            if (!has_tape_symbol(sym)) {
+                errors.push_back(concat("tape symbol `", sym,
+                                        "` in the transition is not in the tape alphabet"));
+            }
+        }
+        for (auto sym : t.new_symbols) {
+            if (!has_tape_symbol(sym)) {
+                errors.push_back(concat("tape symbol `", sym,
+                                        "` in the transition is not in the tape alphabet"));
+            }
+        }
+    }
+    if (errors.empty()) {
+        return true;
+    } else {
+        return unexpected{errors};
+    }
+}
+
+expected<bool, std::size_t> Tm::validate_input(std::string_view input) const {
     for (size_t i = 0; i < input.size(); i++) {
         auto c = input[i];
         if (input_symbols.find(c) == input_symbols.end()) {

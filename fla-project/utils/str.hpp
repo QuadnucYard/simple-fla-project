@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace fla {
@@ -10,19 +9,43 @@ inline namespace {
 
 template <class T>
 inline void str_append(std::string& str, T value) {
+    str += value;
+}
+template <>
+inline void str_append(std::string& str, int value) {
     str += std::to_string(value);
 }
 template <>
-inline void str_append(std::string& str, std::string& value) {
-    str += value;
+inline void str_append(std::string& str, unsigned value) {
+    str += std::to_string(value);
 }
 template <>
-inline void str_append(std::string& str, std::string_view value) {
-    str += value;
+inline void str_append(std::string& str, long value) {
+    str += std::to_string(value);
 }
 template <>
-inline void str_append(std::string& str, const char* value) {
-    str += value;
+inline void str_append(std::string& str, unsigned long value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, long long value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, unsigned long long value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, float value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, double value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, long double value) {
+    str += std::to_string(value);
 }
 
 } // namespace

@@ -7,7 +7,7 @@ namespace fla::pda {
 bool Simulator::operator()(std::string_view input) {
     State state{pda.start_state};
     std::stack<Symbol> stack;
-    stack.push(pda.start_stack_symbol);
+    stack.push(pda.start_symbol);
 
     std::size_t cursor{};
 

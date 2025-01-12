@@ -66,7 +66,7 @@ std::string_view spaces(std::size_t width) {
 }
 
 bool Simulator::operator()(std::string_view input) {
-    if (auto res = tm.validate(input); !res) {
+    if (auto res = tm.validate_input(input); !res) {
         if (!verbose) {
             err << "illegal input\n";
             return false;

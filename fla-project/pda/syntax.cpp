@@ -44,7 +44,7 @@ Pda Parser::parse() {
         } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, q0_regex)) {
             pda.start_state = match[1];
         } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, z0_regex)) {
-            pda.start_stack_symbol = as_symbol(match[1].str());
+            pda.start_symbol = as_symbol(match[1].str());
         } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, f_regex)) {
             for (auto q : comma_separated(match[1])) {
                 pda.final_states.insert(std::string{q});

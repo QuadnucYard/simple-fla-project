@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_set>
+#include <vector>
 
 namespace fla::tm {
 
@@ -70,6 +71,18 @@ struct Tm {
     std::size_t tape_num{1};
     std::vector<Transition> transitions;
 
+    bool has_state(const State& state) const { return states.find(state) != states.end(); }
+
+    bool has_input_symbol(Symbol symbol) const {
+        return symbol == Transition::WILDCARD_SYMBOL ||
+               input_symbols.find(symbol) != input_symbols.end();
+    }
+
+    bool has_tape_symbol(Symbol symbol) const {
+        return symbol == Transition::WILDCARD_SYMBOL ||
+               tape_symbols.find(symbol) != tape_symbols.end();
+    }
+
     bool is_final(State state) const { return final_states.find(state) != final_states.end(); }
 
     std::optional<Transition> transit(const State& old_state, const SymbolVec& peek_symbols) const {
@@ -81,7 +94,11 @@ struct Tm {
         return std::nullopt;
     }
 
-    expected<bool, std::size_t> validate(std::string_view input) const;
+    // Validate whether this PDA is self-consistent.
+    expected<bool, std::vector<std::string>> validate_self() const;
+
+    // Validate whether input symbols are all in the alphabet.
+    expected<bool, std::size_t> validate_input(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Tm& tm);

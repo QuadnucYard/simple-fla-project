@@ -1,6 +1,8 @@
 #include "args.hpp"
+#include "pda/pda.hpp"
 #include "pda/sim.hpp"
 #include "pda/syntax.hpp"
+#include "syntax/err.hpp"
 #include "tm/sim.hpp"
 #include "tm/syntax.hpp"
 
@@ -8,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string_view>
 
 template <class P>
 std::string read_text(const P& path) {
@@ -26,18 +29,92 @@ std::string get_stdin() {
     return buf;
 }
 
+fla::pda::Pda parse_pda(std::string_view text, bool verbose) {
+    try {
+        fla::pda::Parser parser{text};
+        return parser.parse();
+    } catch (fla::SyntaxError err) {
+        if (verbose) {
+            std::cerr << "\x1b[1;31m"
+                         "error:"
+                         "\x1b[0m"
+                      << " " << err.what() << "\n";
+        } else {
+            std::cerr << "syntax error\n";
+        }
+        std::exit(1);
+    }
+}
+
 void run_pda(const fla::Cli& cli) {
     auto text = read_text(cli.path);
-    fla::pda::Parser parser{text};
-    auto pda = parser.parse();
+    auto pda = parse_pda(text, cli.verbose);
+    if (cli.debug) {
+        std::cout << pda << "\n";
+    }
+    if (auto res = pda.validate_self(); !res) {
+        if (cli.verbose) {
+            std::cerr << "\x1b[1;31m"
+                         "error:"
+                         "\x1b[0m"
+                         " the PDA is erroneous\n";
+            for (auto err : res.error()) {
+                std::cerr << "error: " << err << "\n";
+            }
+        } else {
+            std::cerr << "syntax error\n";
+        }
+        std::exit(1);
+    }
+    if (cli.check) {
+        std::cout << "The PDA is sound\n";
+        return;
+    }
     fla::pda::Simulator sim{pda, std::cout, cli.verbose};
     std::cout << std::boolalpha << sim(cli.input ? *cli.input : get_stdin()) << "\n";
 }
 
+fla::tm::Tm parse_tm(std::string_view text, bool verbose) {
+    try {
+        fla::tm::Parser parser{text};
+        return parser.parse();
+    } catch (fla::SyntaxError err) {
+        if (verbose) {
+            std::cerr << "\x1b[1;31m"
+                         "error:"
+                         "\x1b[0m"
+                      << " " << err.what() << "\n";
+        } else {
+            std::cerr << "syntax error\n";
+        }
+        std::exit(1);
+    }
+}
+
 void run_tm(const fla::Cli& cli) {
     auto text = read_text(cli.path);
-    fla::tm::Parser parser{text};
-    auto tm = parser.parse();
+    auto tm = parse_tm(text, cli.verbose);
+    if (cli.debug) {
+        std::cout << tm << "\n";
+    }
+    if (auto res = tm.validate_self(); !res) {
+        if (cli.verbose) {
+            std::cerr << "\x1b[1;31m"
+                         "error:"
+                         "\x1b[0m"
+                         " the TM is erroneous\n";
+            for (auto err : res.error()) {
+                std::cerr << "error: " << err << "\n";
+            }
+        } else {
+            std::cerr << "syntax error\n";
+        }
+        std::exit(1);
+    }
+    if (cli.check) {
+        std::cout << "The TM is sound\n";
+        return;
+    }
     fla::tm::Simulator sim{tm, std::cout, std::cerr, cli.verbose};
     auto res = sim(cli.input ? *cli.input : get_stdin());
     if (!res) {

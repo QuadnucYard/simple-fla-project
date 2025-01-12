@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/expected.hpp"
 #include "../utils/hash.hpp"
 
 #include <optional>
@@ -53,11 +54,23 @@ struct Pda {
     std::unordered_set<Symbol> input_symbols;
     std::unordered_set<Symbol> stack_symbols;
     State start_state;
-    Symbol start_stack_symbol;
+    Symbol start_symbol;
     std::unordered_set<State> final_states;
     std::unordered_map<TransitionKey, TransitionValue> transitions;
 
-    bool is_final(State state) const { return final_states.find(state) != final_states.end(); }
+    bool has_state(const State& state) const { return states.find(state) != states.end(); }
+
+    bool has_input_symbol(Symbol symbol) const {
+        return symbol == NULL_SYMBOL || input_symbols.find(symbol) != input_symbols.end();
+    }
+
+    bool has_stack_symbol(Symbol symbol) const {
+        return symbol == NULL_SYMBOL || stack_symbols.find(symbol) != stack_symbols.end();
+    }
+
+    bool is_final(const State& state) const {
+        return final_states.find(state) != final_states.end();
+    }
 
     std::optional<TransitionValue> transit(const State& old_state, Symbol input_symbol,
                                            Symbol old_stack_top) const {
@@ -73,10 +86,10 @@ struct Pda {
     }
 
     // Validate whether this PDA is self-consistent.
-    bool validate_self() const;
+    expected<bool, std::vector<std::string>> validate_self() const;
 
     // Validate whether input symbols are all in the alphabet.
-    bool validate(std::string_view input) const;
+    bool validate_input(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Pda& pda);

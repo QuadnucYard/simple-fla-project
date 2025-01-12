@@ -4,8 +4,9 @@ set_plat("mingw")
 set_toolchains("llvm")
 set_languages("c++17")
 set_warnings("all")
-add_cxxflags("-fsanitize=address,undefined")
-add_ldflags("-fsanitize=address")
+
+set_policy("build.sanitizer.address", true)
+set_policy("build.sanitizer.undefined", true)
 
 target("fla")
     set_kind("binary")

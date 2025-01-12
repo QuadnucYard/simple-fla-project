@@ -1,7 +1,13 @@
 #include "tm.hpp"
+#include <algorithm>
 #include <unordered_set>
 
 namespace fla::tm {
+
+bool Tm::validate(std::string_view input) const {
+    return std::all_of(input.begin(), input.end(),
+                       [this](auto c) { return input_symbols.find(c) != input_symbols.end(); });
+}
 
 std::ostream& operator<<(std::ostream& os, const SymbolVec& symbols) {
     for (auto c : symbols) {

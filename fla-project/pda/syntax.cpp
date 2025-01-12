@@ -4,11 +4,8 @@
 #include "pda.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <regex>
 #include <string>
-
-using svmatch = std::match_results<std::string_view::const_iterator>;
 
 namespace fla::pda {
 
@@ -20,13 +17,15 @@ Symbol as_symbol(std::string_view s) {
 }
 
 Pda Parser::parse() {
-    static const std::regex q_regex{R"(^#Q = \{(.+)\}$)"};
-    static const std::regex s_regex{R"(^#S = \{(.+)\}$)"};
-    static const std::regex g_regex{R"(^#G = \{(.+)\}$)"};
-    static const std::regex q0_regex{R"(^#q0 = (\w+)$)"};
-    static const std::regex z0_regex{R"(^#z0 = (\w+)$)"};
-    static const std::regex f_regex{R"(^#F = \{(.+)\}$)"};
-    static const std::regex delta_regex{R"(^(\w+) (\S) (\S) (\w+) (\S+)\s*$)"};
+    using svmatch = std::match_results<std::string_view::const_iterator>;
+
+    static const std::regex q_regex{R"(^#Q *= *\{(.+)\}$)"};
+    static const std::regex s_regex{R"(^#S *= *\{(.+)\}$)"};
+    static const std::regex g_regex{R"(^#G *= *\{(.+)\}$)"};
+    static const std::regex q0_regex{R"(^#q0 *= *(\w+)$)"};
+    static const std::regex z0_regex{R"(^#z0 *= *(\w+)$)"};
+    static const std::regex f_regex{R"(^#F *= *\{(.+)\}$)"};
+    static const std::regex delta_regex{R"(^(\w+) +( ) +( ) +(\w+) +( +) *$)"};
 
     Pda pda;
     while (auto line = scanner.next_line()) {
@@ -58,7 +57,7 @@ Pda Parser::parse() {
                 TransitionKey{match[1], as_symbol(match[2].str()), as_symbol(match[3].str())},
                 TransitionValue{match[4], push_symbols});
         } else {
-            throw SyntaxError{concat("unknown input line: ", *line)};
+            throw SyntaxError{concat("invalid line: ", *line)};
         }
     }
 

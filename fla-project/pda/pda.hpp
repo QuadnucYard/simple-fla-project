@@ -68,14 +68,11 @@ struct Pda {
         return std::nullopt;
     }
 
-    bool validate(std::string_view input) const {
-        for (auto c : input) {
-            if (input_symbols.find(c) == input_symbols.end()) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // Validate whether this PDA is self-consistent.
+    bool validate_self() const;
+
+    // Validate whether input symbols are all in the alphabet.
+    bool validate(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Pda& pda);

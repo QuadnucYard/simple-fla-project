@@ -19,14 +19,14 @@ Symbol as_symbol(std::string_view s) {
 }
 
 Tm Parser::parse() {
-    static const std::regex q_regex{R"(^#Q = \{(.+)\}$)"};
-    static const std::regex s_regex{R"(^#S = \{(.+)\}$)"};
-    static const std::regex g_regex{R"(^#G = \{(.+)\}$)"};
-    static const std::regex q0_regex{R"(^#q0 = (\w+)$)"};
-    static const std::regex b_regex{R"(^#B = (\w+)$)"};
-    static const std::regex f_regex{R"(^#F = \{(.+)\}$)"};
-    static const std::regex n_regex{R"(^#N = (\d+)$)"};
-    static const std::regex delta_regex{R"(^(\w+) (\S+) (\S+) (\S+) (\w+)\s*$)"};
+    static const std::regex q_regex{R"(^#Q *= *\{(.+)\}$)"};
+    static const std::regex s_regex{R"(^#S *= *\{(.+)\}$)"};
+    static const std::regex g_regex{R"(^#G *= *\{(.+)\}$)"};
+    static const std::regex q0_regex{R"(^#q0 *= *(\w+)$)"};
+    static const std::regex b_regex{R"(^#B *= *(\w+)$)"};
+    static const std::regex f_regex{R"(^#F *= *\{(.+)\}$)"};
+    static const std::regex n_regex{R"(^#N *= *(\d+)$)"};
+    static const std::regex delta_regex{R"(^(\w+) +(\S+) +(\S+) +(\S+) +(\w+)\s*$)"};
 
     Tm tm;
     while (auto line = scanner.next_line()) {

@@ -1,14 +1,36 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace fla {
 
+inline namespace {
+
+template <class T>
+inline void str_append(std::string& str, T value) {
+    str += std::to_string(value);
+}
+template <>
+inline void str_append(std::string& str, std::string& value) {
+    str += value;
+}
+template <>
+inline void str_append(std::string& str, std::string_view value) {
+    str += value;
+}
+template <>
+inline void str_append(std::string& str, const char* value) {
+    str += value;
+}
+
+} // namespace
+
 template <class... Ts>
 inline std::string concat(Ts&&... args) {
     std::string s;
-    ((s += args), ...);
+    ((str_append(s, args)), ...);
     return s;
 }
 

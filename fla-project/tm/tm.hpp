@@ -80,14 +80,7 @@ struct Tm {
         return std::nullopt;
     }
 
-    bool validate(std::string_view input) const {
-        for (auto c : input) {
-            if (input_symbols.find(c) == input_symbols.end()) {
-                return false;
-            }
-        }
-        return true;
-    }
+    bool validate(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Tm& tm);

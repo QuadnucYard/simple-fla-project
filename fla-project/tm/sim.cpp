@@ -57,15 +57,13 @@ struct Tape {
 };
 
 std::size_t print_width(long long x) {
-    return x == 0 ? 0 : static_cast<std::size_t>(std::log10(x));
-}
-
-std::string_view spaces(std::size_t width) {
-    static const std::string_view SPACES{"            "};
-    return SPACES.substr(0, width);
+    return (x == 0 ? 0 : static_cast<std::size_t>(std::log10(x))) + 1;
 }
 
 bool Simulator::operator()(std::string_view input) {
+    auto verbose = config.verbose;
+    auto rich = config.rich;
+
     if (auto res = tm.validate_input(input); !res) {
         if (!verbose) {
             err << "illegal input\n";
@@ -108,30 +106,65 @@ bool Simulator::operator()(std::string_view input) {
     std::uint32_t step{};
 
     auto print_state = [&]() {
-        out << "Step   : " << step << "\n";
-        out << "State  : " << state << "\n";
+        if (rich) out << "\x1b[38;5;45m";
+        out << "Step   : ";
+        out << step;
+        if (rich) out << "\x1b[0m";
+        out << "\n";
+
+        if (rich) out << "\x1b[38;5;219m";
+        out << "State  : ";
+        out << state;
+        if (rich) out << "\x1b[0m";
+        out << "\n";
+
         for (size_t i = 0; i < tm.tape_num; i++) {
             auto& tape = tapes[i];
+
+            if (rich) out << "\x1b[38;5;28m";
             out << "Index" << i << " : ";
+            if (rich) out << "\x1b[0m";
             for (size_t i = 0; i < tape.tape.size(); i++) {
                 auto pos = std::abs(tape.pos(i));
-                out << pos << " ";
+                if (rich) {
+                    if (rich && i == tape.cursor) out << "\x1b[1;4;38;5;34m";
+                    else out << "\x1b[38;5;36m";
+                }
+                out << pos;
+                if (rich) out << "\x1b[0m";
+                out << " ";
             }
             out << "\n";
+
+            if (rich) out << "\x1b[38;5;178m";
             out << "Tape" << i << "  : ";
+            if (rich) out << "\x1b[0m";
             for (size_t i = 0; i < tape.tape.size(); i++) {
                 auto pos = std::abs(tape.pos(i));
-                out << tape.tape[i] << spaces(print_width(pos) + 1);
+                if (rich) {
+                    if (rich && i == tape.cursor) out << "\x1b[38;5;208m";
+                    else out << "\x1b[38;5;220m";
+                }
+                out << std::left << std::setw(print_width(pos)) << tape.tape[i];
+                if (rich) out << "\x1b[0m";
+                out << ' ';
             }
             out << "\n";
-            out << "Head" << i << "  : ";
-            for (size_t i = 0; i < tape.cursor; i++) {
-                auto pos = std::abs(tape.pos(i));
-                out << spaces(print_width(pos) + 2);
+
+            if (!rich) {
+                out << "Head" << i << "  : ";
+                for (size_t i = 0; i < tape.cursor; i++) {
+                    auto pos = std::abs(tape.pos(i));
+                    out << std::setw(print_width(pos)) << " ";
+                }
+                out << "^";
+                out << '\n';
             }
-            out << "^\n";
         }
+
+        if (rich) out << "\x1b[38;5;105m";
         out << "---------------------------------------------\n";
+        if (rich) out << "\x1b[0m";
     };
 
     if (verbose) {

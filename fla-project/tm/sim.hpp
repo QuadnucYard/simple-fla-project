@@ -9,8 +9,13 @@ namespace fla::tm {
 
 class Simulator {
   public:
-    Simulator(const Tm& tm, std::ostream& out, std::ostream& err, bool verbose = false)
-        : tm{tm}, out{out}, err{err}, verbose{verbose} {}
+    struct Config {
+        bool verbose;
+        bool rich;
+    };
+
+    Simulator(const Tm& tm, std::ostream& out, std::ostream& err, Config config)
+        : tm{tm}, out{out}, err{err}, config{config} {}
 
     bool operator()(std::string_view input);
 
@@ -18,7 +23,7 @@ class Simulator {
     const Tm& tm;
     std::ostream& out;
     std::ostream& err;
-    bool verbose;
+    Config config;
 };
 
 } // namespace fla::tm

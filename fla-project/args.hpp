@@ -12,6 +12,7 @@ struct Cli {
     bool check;
     bool debug;
     bool verbose;
+    bool rich;
 
     static Cli from_matches(const cli::ArgMatches& matches) {
         return Cli{
@@ -20,6 +21,7 @@ struct Cli {
             .check = matches.get_flag("check"),
             .debug = matches.get_flag("debug"),
             .verbose = matches.get_flag("verbose"),
+            .rich = matches.get_flag("rich"),
         };
     }
 };
@@ -39,7 +41,9 @@ inline cli::Command cmd() {
             "Check the grammar of the syntax file"))
         .arg(Arg("debug").short_name('d').long_name("debug").help("Print the PDA/TM"))
         .arg(Arg("verbose").short_name('v').long_name("verbose").help(
-            "Whether to display the whole simulation process"));
+            "Whether to display the whole simulation process"))
+        .arg(Arg("rich").short_name('r').long_name("rich").help(
+            "Whether to display in rich styles"));
 }
 
 } // namespace fla

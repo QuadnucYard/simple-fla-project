@@ -54,6 +54,24 @@ struct Tape {
         case Move::Hold: break;
         }
     }
+
+    auto begin() const {
+        // strip leading blank symbol
+        auto it = tape.begin();
+        if (it != tape.end() && *it == blank) {
+            ++it;
+        }
+        return it;
+    }
+
+    auto end() const {
+        // strip trailing blank symbol
+        auto it = tape.end();
+        if (!(tape.size() == 1 && tape[0] == blank) && tape[tape.size() - 1] == blank) {
+            --it;
+        }
+        return it;
+    }
 };
 
 std::size_t print_width(long long x) {
@@ -197,7 +215,7 @@ bool Simulator::operator()(std::string_view input) {
     }
 
     // print final tape result
-    for (auto c : tapes[0].tape) {
+    for (auto c : tapes[0]) {
         out << c;
     }
     out << "\n";

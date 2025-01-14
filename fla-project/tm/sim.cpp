@@ -44,7 +44,7 @@ struct Tape {
             if (cursor + 1 == tape.size()) {
                 tape.push_back(blank);
             }
-            if (cursor == 1 && tape[0] == blank) {
+            if (cursor == 0 && tape[0] == blank) {
                 tape.pop_front();
             } else {
                 cursor++;

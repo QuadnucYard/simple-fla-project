@@ -1,0 +1,17 @@
+#Q = {q,dead,acc}
+
+#S = {(,)}
+
+#G = {z,x}
+
+#q0 = q
+
+#z0 = z
+
+#F = {acc}
+
+q ( z q xz
+q ( x q xx
+q ) x q _
+q ) z dead z
+q _ z acc _

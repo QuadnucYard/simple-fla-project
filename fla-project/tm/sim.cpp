@@ -96,6 +96,9 @@ bool Simulator::operator()(std::string_view input) {
     for (auto c : input) {
         tapes[0].tape.push_back(c);
     }
+    if (tapes[0].tape.empty()) {
+        tapes[0].tape.push_back(tm.blank_symbol);
+    }
     for (size_t i = 1; i < tm.tape_num; i++) {
         tapes[i].tape.push_back(tm.blank_symbol);
     }

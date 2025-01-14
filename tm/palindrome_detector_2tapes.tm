@@ -29,7 +29,7 @@
 0 1_ 1_ ** cp
 0 __ __ ** accept ; empty input
 
-; State cp: copy the string to the 2nd tape 
+; State cp: copy the string to the 2nd tape
 cp 0_ 00 rr cp
 cp 1_ 11 rr cp
 cp __ __ ll mh

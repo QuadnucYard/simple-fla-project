@@ -89,7 +89,7 @@ struct Pda {
     expected<bool, std::vector<std::string>> validate_self() const;
 
     // Validate whether input symbols are all in the alphabet.
-    bool validate_input(std::string_view input) const;
+    expected<bool, size_t> validate_input(std::string_view input) const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Pda& pda);

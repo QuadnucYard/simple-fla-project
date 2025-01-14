@@ -48,9 +48,14 @@ expected<bool, std::vector<std::string>> Pda::validate_self() const {
     }
 }
 
-bool Pda::validate_input(std::string_view input) const {
-    return std::all_of(input.begin(), input.end(),
-                       [this](auto c) { return input_symbols.find(c) != input_symbols.end(); });
+expected<bool, size_t> Pda::validate_input(std::string_view input) const {
+    for (size_t i = 0; i < input.size(); i++) {
+        auto c = input[i];
+        if (input_symbols.find(c) == input_symbols.end()) {
+            return unexpected{i};
+        }
+    }
+    return true;
 }
 
 template <class T>

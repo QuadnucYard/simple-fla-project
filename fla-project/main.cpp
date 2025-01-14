@@ -70,7 +70,7 @@ void run_pda(const fla::Cli& cli) {
         std::cout << "The PDA is sound\n";
         return;
     }
-    fla::pda::Simulator sim{pda, std::cout, cli.verbose};
+    fla::pda::Simulator sim{pda, std::cout, std::cerr, cli.verbose};
     std::cout << std::boolalpha << sim(cli.input ? *cli.input : get_stdin()) << "\n";
 }
 

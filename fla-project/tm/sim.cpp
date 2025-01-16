@@ -1,6 +1,7 @@
 #include "sim.hpp"
 #include "tm.hpp"
 #include <cmath>
+#include <cstdint>
 #include <deque>
 #include <iomanip>
 #include <iostream>

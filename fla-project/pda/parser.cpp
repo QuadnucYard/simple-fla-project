@@ -57,7 +57,7 @@ Pda Parser::parse() {
                 TransitionKey{match[1], as_symbol(match[2].str()), as_symbol(match[3].str())},
                 TransitionValue{match[4], push_symbols});
         } else {
-            throw SyntaxError{concat("illegal syntax on line ", scanner.line(), ": ", *line)};
+            throw SyntaxError{concat("illegal syntax on line ", scanner.line(), ": `", *line, "`")};
         }
     }
 

@@ -21,7 +21,7 @@ fla::pda::Pda parse_pda(std::string_view text, bool verbose) {
     try {
         fla::pda::Parser parser{text};
         return parser.parse();
-    } catch (fla::SyntaxError err) {
+    } catch (const fla::SyntaxError& err) {
         if (verbose) {
             std::cerr << "\x1b[1;31m"
                          "error:"
@@ -70,7 +70,7 @@ fla::tm::Tm parse_tm(std::string_view text, bool verbose) {
     try {
         fla::tm::Parser parser{text};
         return parser.parse();
-    } catch (fla::SyntaxError err) {
+    } catch (const fla::SyntaxError& err) {
         if (verbose) {
             std::cerr << "\x1b[1;31m"
                          "error:"

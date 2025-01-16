@@ -1,8 +1,20 @@
 #include "pda.hpp"
 #include "../utils/str.hpp"
-#include <algorithm>
 
 namespace fla::pda {
+
+std::optional<TransitionValue> Pda::transit(const State& old_state, Symbol input_symbol,
+                                            Symbol old_stack_top) const {
+    if (auto it = transitions.find({old_state, input_symbol, old_stack_top});
+        it != transitions.end()) {
+        return it->second;
+    }
+    if (auto it = transitions.find({old_state, NULL_SYMBOL, old_stack_top});
+        it != transitions.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
 
 expected<bool, std::vector<std::string>> Pda::validate_self() const {
     std::vector<std::string> errors;

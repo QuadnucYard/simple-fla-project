@@ -73,17 +73,7 @@ struct Pda {
     }
 
     std::optional<TransitionValue> transit(const State& old_state, Symbol input_symbol,
-                                           Symbol old_stack_top) const {
-        if (auto it = transitions.find({old_state, input_symbol, old_stack_top});
-            it != transitions.end()) {
-            return it->second;
-        }
-        if (auto it = transitions.find({old_state, NULL_SYMBOL, old_stack_top});
-            it != transitions.end()) {
-            return it->second;
-        }
-        return std::nullopt;
-    }
+                                           Symbol old_stack_top) const;
 
     // Validate whether this PDA is self-consistent.
     expected<bool, std::vector<std::string>> validate_self() const;

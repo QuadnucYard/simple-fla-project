@@ -20,14 +20,7 @@ enum class Move {
     Hold,
 };
 
-inline std::ostream& operator<<(std::ostream& os, Move move) {
-    switch (move) {
-    case Move::Left:  os << "L"; break;
-    case Move::Right: os << "R"; break;
-    case Move::Hold:  os << "H"; break;
-    }
-    return os;
-}
+std::ostream& operator<<(std::ostream& os, Move move);
 
 struct Action {
     Symbol new_symbol;
@@ -43,17 +36,7 @@ struct Transition {
     SymbolVec new_symbols;
     std::vector<Move> moves;
 
-    bool matches(const State& state, const SymbolVec& peek_symbols) const {
-        if (old_state != state) {
-            return false;
-        }
-        for (size_t i = 0; i < old_symbols.size(); i++) {
-            if (old_symbols[i] != WILDCARD_SYMBOL && old_symbols[i] != peek_symbols[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+    bool matches(const State& state, const SymbolVec& peek_symbols) const;
 };
 
 } // namespace fla::tm
@@ -85,14 +68,7 @@ struct Tm {
 
     bool is_final(State state) const { return final_states.find(state) != final_states.end(); }
 
-    std::optional<Transition> transit(const State& old_state, const SymbolVec& peek_symbols) const {
-        for (auto& tr : transitions) {
-            if (tr.matches(old_state, peek_symbols)) {
-                return tr;
-            }
-        }
-        return std::nullopt;
-    }
+    std::optional<Transition> transit(const State& old_state, const SymbolVec& peek_symbols) const;
 
     // Validate whether this PDA is self-consistent.
     expected<bool, std::vector<std::string>> validate_self() const;

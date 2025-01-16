@@ -33,23 +33,38 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
 
     std::size_t cursor{};
 
+    auto print_state = [&]() {
+        out << "|- " << state << ": ";
+        for (auto c : stack) {
+            out << c;
+        }
+        out << " - ";
+        for (size_t i = cursor; i < input.length(); i++) {
+            out << input[i];
+        }
+        out << "\n";
+    };
+
+    if (verbose) {
+        print_state();
+    }
+
     while (!pda.is_final(state)) {
-        auto c = cursor < input.size() ? input[cursor++] : Pda::NULL_SYMBOL;
+        auto c = cursor < input.size() ? input[cursor] : Pda::NULL_SYMBOL;
         auto top = stack.empty() ? Pda::NULL_SYMBOL : stack.back();
         if (auto tr = pda.transit(state, c, top)) {
-            state = tr->new_state;
-            if (!stack.empty()) {
-                stack.pop_back();
+            state = (*tr)->second.new_state;
+            if ((*tr)->first.input != Pda::NULL_SYMBOL) {
+                cursor++;
+                if (!stack.empty()) {
+                    stack.pop_back();
+                }
             }
-            for (auto z : tr->push_symbols) {
+            for (auto z : (*tr)->second.push_symbols) {
                 stack.push_back(z);
             }
             if (verbose) {
-                out << "|- " << state << ": ";
-                for (auto c : stack) {
-                    out << c;
-                }
-                out << " - " << c << " / " << top << "\n";
+                print_state();
             }
         } else {
             if (verbose) {
@@ -59,7 +74,7 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
         }
     }
 
-    return true;
+    return cursor == input.length();
 }
 
 } // namespace fla::pda

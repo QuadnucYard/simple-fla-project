@@ -44,15 +44,18 @@ struct Transition {
 namespace fla::tm {
 
 struct Tm {
+    using StateSet = std::unordered_set<State>;
+    using SymbolSet = std::unordered_set<Symbol>;
+    using TransitionList = std::vector<Transition>;
 
-    std::unordered_set<State> states;
-    std::unordered_set<Symbol> input_symbols;
-    std::unordered_set<Symbol> tape_symbols;
+    StateSet states;
+    SymbolSet input_symbols;
+    SymbolSet tape_symbols;
     Symbol blank_symbol;
     State start_state;
-    std::unordered_set<State> final_states;
+    StateSet final_states;
     std::size_t tape_num{1};
-    std::vector<Transition> transitions;
+    TransitionList transitions;
 
     bool has_state(const State& state) const { return states.find(state) != states.end(); }
 

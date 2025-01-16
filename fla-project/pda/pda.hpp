@@ -48,15 +48,19 @@ struct std::hash<fla::pda::TransitionKey> {
 namespace fla::pda {
 
 struct Pda {
+    using StateSet = std::unordered_set<State>;
+    using SymbolSet = std::unordered_set<Symbol>;
+    using TransitionMap = std::unordered_map<TransitionKey, TransitionValue>;
+
     static constexpr Symbol NULL_SYMBOL = {};
 
-    std::unordered_set<State> states;
-    std::unordered_set<Symbol> input_symbols;
-    std::unordered_set<Symbol> stack_symbols;
+    StateSet states;
+    SymbolSet input_symbols;
+    SymbolSet stack_symbols;
     State start_state;
     Symbol start_symbol;
-    std::unordered_set<State> final_states;
-    std::unordered_map<TransitionKey, TransitionValue> transitions;
+    StateSet final_states;
+    TransitionMap transitions;
 
     bool has_state(const State& state) const { return states.find(state) != states.end(); }
 
@@ -72,8 +76,8 @@ struct Pda {
         return final_states.find(state) != final_states.end();
     }
 
-    std::optional<TransitionValue> transit(const State& old_state, Symbol input_symbol,
-                                           Symbol old_stack_top) const;
+    std::optional<TransitionMap::const_iterator>
+    transit(const State& old_state, Symbol input_symbol, Symbol old_stack_top) const;
 
     // Validate whether this PDA is self-consistent.
     expected<bool, std::vector<std::string>> validate_self() const;

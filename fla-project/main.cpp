@@ -59,7 +59,11 @@ void run_pda(const fla::Cli& cli) {
         return;
     }
     fla::pda::Simulator sim{pda, std::cout, std::cerr, cli.verbose};
-    std::cout << std::boolalpha << sim(cli.input ? *cli.input : get_stdin()) << "\n";
+    auto res = sim(cli.input ? *cli.input : get_stdin());
+    if (!res) {
+        std::exit(1);
+    }
+    std::cout << std::boolalpha << *res << "\n";
 }
 
 fla::tm::Tm parse_tm(std::string_view text, bool verbose) {

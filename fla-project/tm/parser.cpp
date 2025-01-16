@@ -75,7 +75,7 @@ Tm Parser::parse() {
             }
             tm.transitions.push_back(std::move(tr));
         } else {
-            throw SyntaxError{concat("unknown input line: ", *line)};
+            throw SyntaxError{concat("illegal syntax on line ", scanner.line(), ": ", *line)};
         }
     }
 

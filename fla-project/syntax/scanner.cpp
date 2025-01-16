@@ -8,6 +8,7 @@ std::optional<std::string_view> Scanner::next_line() {
         if (cursor >= input.size()) {
             return std::nullopt;
         }
+        line_++;
         auto start = cursor;
         while (cursor < input.size() && input[cursor] != '\n') {
             cursor++;

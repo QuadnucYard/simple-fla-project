@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cctype>
 #include <string>
 #include <vector>
 
@@ -61,8 +62,11 @@ inline std::vector<std::string> comma_separated(const std::string& s) {
     std::vector<std::string> res;
     std::size_t first = 0;
     while (first < s.size()) {
+        while (first < s.size() && (s[first] == ',' || std::isspace(s[first]))) {
+            first++;
+        }
         size_t last = first;
-        while (last < s.size() && s[last] != ',') {
+        while (last < s.size() && s[last] != ',' && !std::isspace(s[last])) {
             last++;
         }
         res.push_back(s.substr(first, last - first));

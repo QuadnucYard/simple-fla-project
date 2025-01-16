@@ -195,9 +195,9 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
         }
         if (auto tr = tm.transit(state, peek)) {
             step++;
-            state = tr->new_state;
+            state = (*tr)->new_state;
             for (size_t i = 0; i < tm.tape_num; i++) {
-                tapes[i].write(tr->new_symbols[i], tr->moves[i]);
+                tapes[i].write((*tr)->new_symbols[i], (*tr)->moves[i]);
             }
             if (verbose) {
                 print_state();

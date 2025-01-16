@@ -47,6 +47,7 @@ struct Tm {
     using StateSet = std::unordered_set<State>;
     using SymbolSet = std::unordered_set<Symbol>;
     using TransitionList = std::vector<Transition>;
+    using TransitionMap = std::unordered_map<State, TransitionList>;
 
     StateSet states;
     SymbolSet input_symbols;
@@ -55,7 +56,7 @@ struct Tm {
     State start_state;
     StateSet final_states;
     std::size_t tape_num{1};
-    TransitionList transitions;
+    TransitionMap transitions;
 
     bool has_state(const State& state) const { return states.find(state) != states.end(); }
 
@@ -71,7 +72,8 @@ struct Tm {
 
     bool is_final(State state) const { return final_states.find(state) != final_states.end(); }
 
-    std::optional<Transition> transit(const State& old_state, const SymbolVec& peek_symbols) const;
+    std::optional<TransitionList::const_iterator> transit(const State& old_state,
+                                                          const SymbolVec& peek_symbols) const;
 
     // Validate whether this PDA is self-consistent.
     expected<bool, std::vector<std::string>> validate_self() const;

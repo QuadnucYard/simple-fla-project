@@ -1,5 +1,6 @@
 #include "tm.hpp"
 #include "../utils/str.hpp"
+#include <algorithm>
 #include <unordered_set>
 
 namespace fla::tm {
@@ -45,10 +46,14 @@ bool Transition::matches(const State& state, const SymbolVec& peek_symbols) cons
     return true;
 }
 
-std::optional<Transition> Tm::transit(const State& old_state, const SymbolVec& peek_symbols) const {
-    for (auto& tr : transitions) {
-        if (tr.matches(old_state, peek_symbols)) {
-            return tr;
+std::optional<Tm::TransitionList::const_iterator> Tm::transit(const State& old_state,
+                                                              const SymbolVec& peek_symbols) const {
+    if (auto tr_it = transitions.find(old_state); tr_it != transitions.end()) {
+        auto& trs = tr_it->second;
+        auto it = std::find_if(trs.begin(), trs.end(),
+                               [&](auto&& tr) { return tr.matches(old_state, peek_symbols); });
+        if (it != trs.end()) {
+            return it;
         }
     }
     return std::nullopt;
@@ -67,38 +72,42 @@ expected<bool, std::vector<std::string>> Tm::validate_self() const {
     if (!has_tape_symbol(blank_symbol)) {
         errors.push_back(concat("blank symbol `", blank_symbol, "` is not in the tape alphabet"));
     }
-    for (auto&& t : transitions) {
-        if (!has_state(t.old_state)) {
-            errors.push_back(
-                concat("old state `", t.old_state, "` in the transition is not in the state set"));
-        }
-        if (!has_state(t.new_state)) {
-            errors.push_back(
-                concat("new state `", t.new_state, "` in the transition is not in the state set"));
-        }
-        if (t.old_symbols.size() != tape_num) {
-            errors.push_back(concat("the size of symbol vector (old) `", to_string(t.old_symbols),
-                                    "` does not match the tape number `", tape_num, "`"));
-        }
-        for (auto sym : t.old_symbols) {
-            if (!has_tape_symbol(sym)) {
-                errors.push_back(concat("tape symbol `", sym,
-                                        "` in the transition is not in the tape alphabet"));
+    for (auto&& [k, v] : transitions) {
+        for (auto&& t : v) {
+            if (!has_state(t.old_state)) {
+                errors.push_back(concat("old state `", t.old_state,
+                                        "` in the transition is not in the state set"));
             }
-        }
-        if (t.new_symbols.size() != tape_num) {
-            errors.push_back(concat("the size of symbol vector (new) `", to_string(t.new_symbols),
-                                    "` does not match the tape number `", tape_num, "`"));
-        }
-        for (auto sym : t.new_symbols) {
-            if (!has_tape_symbol(sym)) {
-                errors.push_back(concat("tape symbol `", sym,
-                                        "` in the transition is not in the tape alphabet"));
+            if (!has_state(t.new_state)) {
+                errors.push_back(concat("new state `", t.new_state,
+                                        "` in the transition is not in the state set"));
             }
-        }
-        if (t.moves.size() != tape_num) {
-            errors.push_back(concat("the size of move vector `", to_string(t.old_symbols),
-                                    "` does not match the tape number `", tape_num, "`"));
+            if (t.old_symbols.size() != tape_num) {
+                errors.push_back(concat("the size of symbol vector (old) `",
+                                        to_string(t.old_symbols),
+                                        "` does not match the tape number `", tape_num, "`"));
+            }
+            for (auto sym : t.old_symbols) {
+                if (!has_tape_symbol(sym)) {
+                    errors.push_back(concat("tape symbol `", sym,
+                                            "` in the transition is not in the tape alphabet"));
+                }
+            }
+            if (t.new_symbols.size() != tape_num) {
+                errors.push_back(concat("the size of symbol vector (new) `",
+                                        to_string(t.new_symbols),
+                                        "` does not match the tape number `", tape_num, "`"));
+            }
+            for (auto sym : t.new_symbols) {
+                if (!has_tape_symbol(sym)) {
+                    errors.push_back(concat("tape symbol `", sym,
+                                            "` in the transition is not in the tape alphabet"));
+                }
+            }
+            if (t.moves.size() != tape_num) {
+                errors.push_back(concat("the size of move vector `", to_string(t.old_symbols),
+                                        "` does not match the tape number `", tape_num, "`"));
+            }
         }
     }
     if (errors.empty()) {
@@ -156,9 +165,11 @@ std::ostream& operator<<(std::ostream& os, const Tm& tm) {
     os << "Final states (F):      " << tm.final_states << "\n";
     os << "Tape number (N):       " << tm.tape_num << "\n";
     os << "Transitions:\n";
-    for (auto&& tr : tm.transitions) {
-        os << "    " << tr.old_state << " -> " << tr.new_state << ", " << tr.old_symbols << " / "
-           << tr.new_symbols << ", " << tr.moves << "\n";
+    for (auto&& [_, v] : tm.transitions) {
+        for (auto&& tr : v) {
+            os << "    " << tr.old_state << " -> " << tr.new_state << ", " << tr.old_symbols
+               << " / " << tr.new_symbols << ", " << tr.moves << "\n";
+        }
     }
     return os;
 }

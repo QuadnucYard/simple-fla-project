@@ -73,7 +73,7 @@ Tm Parser::parse() {
                 }
                 tr.moves.push_back(move);
             }
-            tm.transitions.push_back(std::move(tr));
+            tm.transitions[tr.old_state].push_back(std::move(tr));
         } else {
             throw SyntaxError{concat("illegal syntax on line ", scanner.line(), ": ", *line)};
         }

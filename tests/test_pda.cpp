@@ -1,5 +1,5 @@
+#include "pda/parser.hpp"
 #include "pda/sim.hpp"
-#include "pda/syntax.hpp"
 #include "syntax/err.hpp"
 #include "utils/file.hpp"
 

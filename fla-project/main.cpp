@@ -1,10 +1,10 @@
 #include "args.hpp"
+#include "pda/parser.hpp"
 #include "pda/pda.hpp"
 #include "pda/sim.hpp"
-#include "pda/syntax.hpp"
 #include "syntax/err.hpp"
+#include "tm/parser.hpp"
 #include "tm/sim.hpp"
-#include "tm/syntax.hpp"
 #include "utils/file.hpp"
 
 #include <filesystem>

@@ -1,4 +1,4 @@
-#include "syntax.hpp"
+#include "parser.hpp"
 #include "../syntax/err.hpp"
 #include "../utils/str.hpp"
 #include "tm.hpp"

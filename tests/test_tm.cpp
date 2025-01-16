@@ -1,6 +1,6 @@
 #include "syntax/err.hpp"
+#include "tm/parser.hpp"
 #include "tm/sim.hpp"
-#include "tm/syntax.hpp"
 #include "utils/file.hpp"
 
 #include <catch2/catch_test_macros.hpp>

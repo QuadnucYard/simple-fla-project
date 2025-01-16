@@ -1,15 +1,16 @@
 #include "sim.hpp"
 #include "pda.hpp"
+#include "utils/expected.hpp"
 #include <deque>
 #include <iomanip>
 
 namespace fla::pda {
 
-bool Simulator::operator()(std::string_view input) {
+expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
     if (auto res = pda.validate_input(input); !res) {
         if (!verbose) {
             err << "illegal input\n";
-            return false;
+            return unexpected{SimulationError::IllegalInput};
         }
 
         auto err_index = res.error();
@@ -19,7 +20,7 @@ bool Simulator::operator()(std::string_view input) {
         err << "Input: " << input << "\n";
         err << "       " << std::setw(err_index + 1) << '^' << "\n";
         err << "==================== END ====================\n";
-        return false;
+        return unexpected{SimulationError::IllegalInput};
     }
     if (verbose) {
         out << "Input: " << input << "\n";

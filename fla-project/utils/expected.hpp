@@ -25,9 +25,17 @@ class expected {
     expected(T value) : value_{value} {}
     expected(unexpected<E> err) : value_{err} {}
 
+    bool has_value() const { return value_.index() == 0; }
+
+    bool is_error() const { return value_.index() == 1; }
+
+    const T& value() const { return std::get<0>(value_); }
+
     const E& error() const { return std::get<1>(value_).error(); };
 
-    operator bool() const { return value_.index() == 0; }
+    operator bool() const { return has_value(); }
+
+    const T& operator*() const { return value(); }
 
   private:
     std::variant<T, unexpected<E>> value_;

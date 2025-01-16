@@ -5,23 +5,11 @@
 #include "syntax/err.hpp"
 #include "tm/sim.hpp"
 #include "tm/syntax.hpp"
+#include "utils/file.hpp"
 
 #include <filesystem>
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string_view>
-
-template <class P>
-std::string read_text(const P& path) {
-    std::ifstream fin{path};
-    if (!fin) {
-        throw std::runtime_error{"fail to open file"};
-    }
-    std::stringstream stream;
-    stream << fin.rdbuf();
-    return stream.str();
-}
 
 std::string get_stdin() {
     std::string buf;

@@ -78,14 +78,14 @@ std::size_t print_width(long long x) {
     return (x == 0 ? 0 : static_cast<std::size_t>(std::log10(x))) + 1;
 }
 
-bool Simulator::operator()(std::string_view input) {
+expected<std::string, SimulationError> Simulator::operator()(std::string_view input) {
     auto verbose = config.verbose;
     auto rich = config.rich;
 
     if (auto res = tm.validate_input(input); !res) {
         if (!verbose) {
             err << "illegal input\n";
-            return false;
+            return unexpected{SimulationError::IllegalInput};
         }
 
         // error: 'A' was not declared in the set of input symbols
@@ -98,7 +98,7 @@ bool Simulator::operator()(std::string_view input) {
         err << "Input: " << input << "\n";
         err << "       " << std::setw(err_index + 1) << '^' << "\n";
         err << "==================== END ====================\n";
-        return false;
+        return unexpected{SimulationError::IllegalInput};
     }
     if (verbose) {
         out << "Input: " << input << "\n";
@@ -215,7 +215,9 @@ bool Simulator::operator()(std::string_view input) {
     }
 
     // print final tape result
+    std::string result;
     for (auto c : tapes[0]) {
+        result += c;
         out << c;
     }
     out << "\n";
@@ -223,7 +225,7 @@ bool Simulator::operator()(std::string_view input) {
     if (verbose) {
         out << "==================== END ====================\n";
     }
-    return true;
+    return result;
 }
 
 } // namespace fla::tm

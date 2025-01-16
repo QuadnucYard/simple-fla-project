@@ -7,17 +7,19 @@
 
 namespace fla::tm {
 
+enum class SimulationError { IllegalInput };
+
 class Simulator {
   public:
     struct Config {
-        bool verbose;
-        bool rich;
+        bool verbose{};
+        bool rich{};
     };
 
     Simulator(const Tm& tm, std::ostream& out, std::ostream& err, Config config)
         : tm{tm}, out{out}, err{err}, config{config} {}
 
-    bool operator()(std::string_view input);
+    expected<std::string, SimulationError> operator()(std::string_view input);
 
   private:
     const Tm& tm;

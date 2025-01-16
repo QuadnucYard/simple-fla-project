@@ -32,18 +32,18 @@ inline cli::Command cmd() {
     return Command("fla")
         .help("A CLI tool to parse and simulate PDA or TM")
         .arg(Arg("path")
-                 .help("The path of the PDA/TM syntax file. Must end with `.pda` or `.tm`")
+                 .help("Path to the PDA/TM syntax file. Must end with `.pda` or `.tm`")
                  .required(true))
         .arg(Arg("input")
-                 .help("The input to the PDA or TM. Read from stdin if not provided")
+                 .help("Input for the PDA or TM. Reads from stdin if not provided")
                  .required(false))
         .arg(Arg("check").short_name('c').long_name("check").help(
             "Check the grammar of the syntax file"))
-        .arg(Arg("debug").short_name('d').long_name("debug").help("Print the PDA/TM"))
+        .arg(Arg("debug").short_name('d').long_name("debug").help(
+            "Print the parameters of the PDA/TM"))
         .arg(Arg("verbose").short_name('v').long_name("verbose").help(
-            "Whether to display the whole simulation process"))
-        .arg(Arg("rich").short_name('r').long_name("rich").help(
-            "Whether to display in rich styles"));
+            "Display the entire simulation process in details"))
+        .arg(Arg("rich").short_name('r').long_name("rich").help("Enable rich style output"));
 }
 
 } // namespace fla

@@ -21,6 +21,9 @@ expected<bool, std::vector<std::string>> Pda::validate_self() const {
     if (!has_state(start_state)) {
         errors.push_back(concat("start state `", start_state, "` is not in the state set"));
     }
+    if (final_states.empty()) {
+        errors.push_back(concat("no final state is provided"));
+    }
     for (auto&& final_state : final_states) {
         if (!has_state(final_state)) {
             errors.push_back(concat("final state `", final_state, "` is not in the state set"));

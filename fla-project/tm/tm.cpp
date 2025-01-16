@@ -4,6 +4,26 @@
 
 namespace fla::tm {
 
+std::string to_string(const SymbolVec& symbols) {
+    std::string s;
+    for (auto c : symbols) {
+        s.push_back(c);
+    }
+    return s;
+}
+
+std::string to_string(const std::vector<Move>& symbols) {
+    std::string s;
+    for (auto c : symbols) {
+        switch (c) {
+        case Move::Left:  s.push_back('l'); break;
+        case Move::Right: s.push_back('r'); break;
+        case Move::Hold:  s.push_back('*'); break;
+        }
+    }
+    return s;
+}
+
 std::ostream& operator<<(std::ostream& os, Move move) {
     switch (move) {
     case Move::Left:  os << "L"; break;
@@ -56,17 +76,29 @@ expected<bool, std::vector<std::string>> Tm::validate_self() const {
             errors.push_back(
                 concat("new state `", t.new_state, "` in the transition is not in the state set"));
         }
+        if (t.old_symbols.size() != tape_num) {
+            errors.push_back(concat("the size of symbol vector (old) `", to_string(t.old_symbols),
+                                    "` does not match the tape number `", tape_num, "`"));
+        }
         for (auto sym : t.old_symbols) {
             if (!has_tape_symbol(sym)) {
                 errors.push_back(concat("tape symbol `", sym,
                                         "` in the transition is not in the tape alphabet"));
             }
         }
+        if (t.new_symbols.size() != tape_num) {
+            errors.push_back(concat("the size of symbol vector (new) `", to_string(t.new_symbols),
+                                    "` does not match the tape number `", tape_num, "`"));
+        }
         for (auto sym : t.new_symbols) {
             if (!has_tape_symbol(sym)) {
                 errors.push_back(concat("tape symbol `", sym,
                                         "` in the transition is not in the tape alphabet"));
             }
+        }
+        if (t.moves.size() != tape_num) {
+            errors.push_back(concat("the size of move vector `", to_string(t.old_symbols),
+                                    "` does not match the tape number `", tape_num, "`"));
         }
     }
     if (errors.empty()) {

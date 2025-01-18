@@ -88,4 +88,6 @@ struct Pda {
 
 std::ostream& operator<<(std::ostream& os, const Pda& pda);
 
+inline char symbol_display(Symbol symbol) { return symbol == Pda::NULL_SYMBOL ? '_' : symbol; }
+
 } // namespace fla::pda

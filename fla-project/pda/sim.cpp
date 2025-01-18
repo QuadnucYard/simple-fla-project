@@ -68,7 +68,8 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
             }
         } else {
             if (verbose) {
-                out << "no trans for " << state << ", " << c << ", " << top << "\n";
+                out << "no trans for " << state << ", " << symbol_display(c) << ", "
+                    << symbol_display(top) << "\n";
             }
             return false;
         }

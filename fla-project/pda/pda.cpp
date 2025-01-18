@@ -97,8 +97,9 @@ std::ostream& operator<<(std::ostream& os, const Pda& pda) {
     os << "Final states (F):        " << pda.final_states << "\n";
     os << "Transitions:\n";
     for (auto&& [k, v] : pda.transitions) {
-        os << "    delta(" << k.old_state << ", " << k.input << ", " << k.old_stack_top << ") = ("
-           << v.new_state << ", " << v.push_symbols << ")\n";
+        os << "    delta(" << k.old_state << ", " << symbol_display(k.input) << ", "
+           << symbol_display(k.old_stack_top) << ") = (" << v.new_state << ", " << v.push_symbols
+           << ")\n";
     }
     return os;
 }

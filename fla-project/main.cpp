@@ -55,7 +55,7 @@ void run_pda(const fla::Cli& cli) {
         std::exit(1);
     }
     if (cli.check) {
-        std::cout << "The PDA is sound\n";
+        std::cout << "The PDA looks good\n";
         return;
     }
     fla::pda::Simulator sim{pda, std::cout, std::cerr, cli.verbose};
@@ -104,7 +104,7 @@ void run_tm(const fla::Cli& cli) {
         std::exit(1);
     }
     if (cli.check) {
-        std::cout << "The TM is sound\n";
+        std::cout << "The TM looks good\n";
         return;
     }
     fla::tm::Simulator sim{

@@ -35,36 +35,5 @@ target("fla")
     set_rundir(os.projectdir())
 
 if not is_submit then
-    -- unit tests
-    for _, file in ipairs(os.files("tests/test_*.cpp")) do
-        local name = path.basename(file)
-        target(name)
-            set_kind("binary")
-            set_default(false)
-            add_deps("fla-core")
-            add_packages("catch2")
-            add_files("tests/" .. name .. ".cpp")
-            add_tests("default")
-            set_rundir("$(projectdir)")
-    end
-
-    -- unit tests with CLI
-    target("test_cases")
-        set_kind("binary")
-        set_default(false)
-        add_deps("fla-core")
-        add_files("fla-project/*.cpp")
-        set_rundir(os.projectdir())
-
-        on_load(function (target)
-            import("scripts.parse_testcases")
-            local testcases = parse_testcases(io.readfile("tests/fixtures/testcases.txt"))
-            for i, case in ipairs(testcases) do
-                target:add("tests", string.format("case-%02d", i), {
-                    runargs = {path.join("tests/fixtures/assets", case.source), case.input},
-                    pass_outputs = case.output,
-                    trim_output = true,
-                })
-            end
-        end)
+    includes("tests")
 end

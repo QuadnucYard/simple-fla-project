@@ -57,7 +57,7 @@ xmake run fla path/to/model.tm your_input -v -r
 
 For CMake users, Good Luck!
 
-## Development
+## Build
 
 Requires [XMake](https://xmake.io/) and a compiler supporting C++17.
 
@@ -88,4 +88,17 @@ cd ./build; make
 
 ## Testing
 
+Testing is empowered by XMake.
+
+We have two kinds of tests:
+
+- Test core library. Check validity and simulator output by catch2.
+- Test more cases through CLI.
+
 The fixtures are from <https://github.com/NijikaIjichi/nju-fla-turing>.
+
+- Run all tests:
+
+```sh
+xmake test
+```

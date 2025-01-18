@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -27,14 +28,6 @@ template <> auto parse<bool>(const std::string& s) -> bool {
 template <> auto parse<std::string>(const std::string& s) -> std::string { return s; }
 
 } // namespace impl
-
-std::size_t get_first_width(const std::vector<std::pair<std::string, std::string>>& info) {
-    std::size_t w{};
-    for (auto& a : info) {
-        w = std::max(w, a.first.length());
-    }
-    return w;
-}
 
 ArgMatches Command::get_matches(std::size_t argc, char* const* argv) const {
     ArgMatches matches;
@@ -140,8 +133,23 @@ void Command::print_help() const {
 void Command::print_usage(bool err) const {
     auto& out = err ? std::cerr : std::cout;
 
-    std::vector<std::pair<std::string, std::string>> argument_usages;
-    std::vector<std::pair<std::string, std::string>> option_usages;
+    struct Entry {
+        std::string name;
+        std::string help;
+        Arg::DisplayOrder order;
+    };
+    struct Group {
+        using Order = int;
+        std::string name;
+        Order order{};
+        std::vector<Entry> entries{};
+    };
+
+    std::vector<Group> groups;
+    groups.push_back(Group{.name = "Arguments"});
+    groups.push_back(Group{.name = "Options"});
+    auto& argument_usages = groups[0];
+    auto& option_usages = groups[1];
 
     out << "\x1b[0;4;1m"
            "Usage:"
@@ -156,7 +164,8 @@ void Command::print_usage(bool err) const {
             } else {
                 out << " [" << value_name << "]";
             }
-            argument_usages.emplace_back(std::move(value_name), arg.get_help());
+            argument_usages.entries.push_back(
+                Entry{std::move(value_name), arg.get_help(), arg.display_order_});
         } else {
             if (arg.is_required()) {
                 if (arg.long_) {
@@ -182,7 +191,8 @@ void Command::print_usage(bool err) const {
             if (arg.is_required()) {
                 info += value_name;
             }
-            option_usages.emplace_back(std::move(info), arg.get_help());
+            option_usages.entries.push_back(
+                Entry{std::move(info), arg.get_help(), arg.display_order_});
         }
     }
     out << "\n\n";
@@ -195,26 +205,21 @@ void Command::print_usage(bool err) const {
         return;
     }
 
-    if (!argument_usages.empty()) {
-        out << "\x1b[0;1m"
-               "Arguments:"
-               "\x1b[0m"
-               "\n";
-        auto w = get_first_width(argument_usages);
-        for (auto& a : argument_usages) {
-            out << "  " << std::left << std::setw(w + 2) << a.first << a.second << "\n";
+    for (auto& group : groups) {
+        if (group.entries.empty()) {
+            continue;
         }
-        out << "\n";
-    }
-
-    if (!option_usages.empty()) {
-        out << "\x1b[0;1m"
-               "Options:"
+        auto& entries = group.entries;
+        std::stable_sort(entries.begin(), entries.end(),
+                         [](auto&& a, auto&& b) { return a.order < b.order; });
+        out << "\x1b[0;1m" << group.name
+            << ":"
                "\x1b[0m"
                "\n";
-        auto w = get_first_width(option_usages);
-        for (auto& a : option_usages) {
-            out << "  " << std::left << std::setw(w + 2) << a.first << a.second << "\n";
+        auto w = std::reduce(entries.begin(), entries.end(), (std::size_t)0,
+                             [](auto x, Entry& e) { return std::max(x, e.name.length()); });
+        for (auto&& entry : entries) {
+            out << "  " << std::left << std::setw(w + 2) << entry.name << entry.help << "\n";
         }
         out << "\n";
     }

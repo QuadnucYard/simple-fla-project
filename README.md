@@ -17,6 +17,7 @@ Arguments:
   INPUT  Input for the PDA or TM. Reads from stdin if not provided
 
 Options:
+  -l, --limit    Limit of simulation steps
   -c, --check    Check the grammar of the syntax file
   -d, --debug    Print the parameters of the PDA/TM
   -v, --verbose  Display the entire simulation process in details

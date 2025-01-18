@@ -65,6 +65,8 @@ class ArgMatches {
 
 class Arg {
   public:
+    using DisplayOrder = int;
+
     Arg(std::string id) : id_{std::move(id)} {}
 
     Arg& short_name(char c) {
@@ -109,7 +111,7 @@ class Arg {
         return *this;
     }
 
-    Arg& display_order(int order) {
+    Arg& display_order(DisplayOrder order) {
         display_order_ = order;
         return *this;
     }
@@ -143,7 +145,7 @@ class Arg {
     std::optional<std::string> help_{};
     bool required_{};
     ArgAction action_{ArgAction::Set};
-    int display_order_{0};
+    DisplayOrder display_order_{0};
 
     friend class Command;
 };
@@ -159,7 +161,8 @@ class Command {
                             .short_name('h')
                             .long_name("help")
                             .help("Print help")
-                            .action(ArgAction::Help));
+                            .action(ArgAction::Help)
+                            .display_order(0x7fffffff));
 
         return *this;
     }

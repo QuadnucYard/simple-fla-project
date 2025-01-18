@@ -206,6 +206,9 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
         } else {
             break;
         }
+        if (step >= config.limit) {
+            break;
+        }
     }
 
     if (verbose) {

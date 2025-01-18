@@ -7,6 +7,27 @@
 
 namespace cli {
 
+namespace impl {
+
+template <> auto parse<int>(const std::string& s) -> int { return std::stoi(s); }
+template <> auto parse<unsigned int>(const std::string& s) -> unsigned int { return std::stoul(s); }
+template <> auto parse<long>(const std::string& s) -> long { return std::stol(s); }
+template <> auto parse<unsigned long>(const std::string& s) -> unsigned long {
+    return std::stoul(s);
+}
+template <> auto parse<long long>(const std::string& s) -> long long { return std::stoll(s); }
+template <> auto parse<unsigned long long>(const std::string& s) -> unsigned long long {
+    return std::stoull(s);
+}
+template <> auto parse<float>(const std::string& s) -> float { return std::stof(s); }
+template <> auto parse<double>(const std::string& s) -> double { return std::stod(s); }
+template <> auto parse<bool>(const std::string& s) -> bool {
+    return s == "y" || s == "yes" || s == "true";
+}
+template <> auto parse<std::string>(const std::string& s) -> std::string { return s; }
+
+} // namespace impl
+
 std::size_t get_first_width(const std::vector<std::pair<std::string, std::string>>& info) {
     std::size_t w{};
     for (auto& a : info) {
@@ -15,10 +36,16 @@ std::size_t get_first_width(const std::vector<std::pair<std::string, std::string
     return w;
 }
 
-ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
-    args_.push_back(Arg("help").short_name('h').long_name("help").help("Print help"));
-
+ArgMatches Command::get_matches(std::size_t argc, char* const* argv) const {
     ArgMatches matches;
+
+    // set default values
+    for (auto& arg : args_) {
+        if (arg.default_value_) {
+            matches.args_[arg.id_].set(arg.default_value_.value());
+        }
+    }
+
     std::vector<std::string> positionals;
     for (std::size_t i = 1; i < argc; i++) {
         std::string_view s{argv[i]};
@@ -29,7 +56,6 @@ ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
                 auto name = s.substr(2);
                 it = std::find_if(args_.begin(), args_.end(),
                                   [&](const Arg& arg) { return arg.long_ && *arg.long_ == name; });
-
             } else {
                 // short
                 auto name = s[1];
@@ -38,13 +64,15 @@ ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
                 });
             }
             if (it != args_.end()) {
-                // help
-                if (it->id_ == "help") {
-                    print_help();
-                    std::exit(0);
+                auto& matched_arg = matches.args_[it->id_];
+                // perform arg action
+                switch (it->action_) {
+                case ArgAction::Set:      matched_arg.set(argv[++i]); break;
+                case ArgAction::SetTrue:  matched_arg.set("true"); break;
+                case ArgAction::SetFalse: matched_arg.set("false"); break;
+                case ArgAction::Append:   matched_arg.append(argv[i]); break;
+                case ArgAction::Help:     print_help(); std::exit(0);
                 }
-                // non-flag args not supported
-                matches.args_[it->id_].values_.push_back(argv[i]);
             } else {
                 std::cerr << "\x1b[1;31m"
                              "error:"
@@ -66,14 +94,14 @@ ArgMatches Command::get_matches(std::size_t argc, char* const* argv) {
     for (auto& arg : args_) {
         if (arg.is_positional()) {
             if (i < positionals.size()) {
-                matches.args_[arg.id_].values_.push_back(std::move(positionals[i]));
+                matches.args_[arg.id_].append(std::move(positionals[i]));
                 i++;
             }
         }
     }
     // check requirements
     for (auto& arg : args_) {
-        if (arg.is_required() && !matches.get_flag(arg.id_)) {
+        if (arg.is_required() && !matches.contains(arg.id_)) {
             std::cerr << "\x1b[1;31m"
                          "error:"
                          "\x1b[0m"

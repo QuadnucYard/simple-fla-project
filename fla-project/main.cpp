@@ -107,8 +107,9 @@ void run_tm(const fla::Cli& cli) {
         std::cout << "The TM is sound\n";
         return;
     }
-    fla::tm::Simulator sim{tm, std::cout, std::cerr,
-                           fla::tm::Simulator::Config{.verbose = cli.verbose, .rich = cli.rich}};
+    fla::tm::Simulator sim{
+        tm, std::cout, std::cerr,
+        fla::tm::Simulator::Config{.verbose = cli.verbose, .rich = cli.rich, .limit = cli.limit}};
     auto res = sim(cli.input ? *cli.input : get_stdin());
     if (!res) {
         std::exit(1);

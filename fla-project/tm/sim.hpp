@@ -14,6 +14,7 @@ class Simulator {
     struct Config {
         bool verbose{};
         bool rich{};
+        unsigned limit{1000000};
     };
 
     Simulator(const Tm& tm, std::ostream& out, std::ostream& err, Config config)

@@ -10,26 +10,52 @@
 
 namespace cli {
 
+namespace impl {
+
+template <class T>
+auto parse(const std::string& s) -> T;
+
+}
+
+enum class ArgAction { Set, SetTrue, SetFalse, Append, Help };
+
 class MatchedArg {
+  public:
+    void set(std::string value) {
+        values_.clear();
+        values_.push_back(std::move(value));
+    }
+
+    void append(std::string value) { values_.push_back(std::move(value)); }
+
   private:
     std::vector<std::string> values_;
 
-    friend class Command;
     friend class ArgMatches;
 };
 
 class ArgMatches {
   public:
-    std::optional<std::string> get_one(const std::string& id) const {
+    template <class T>
+    std::optional<T> get_one(const std::string& id) const {
         if (auto it = args_.find(id); it != args_.end()) {
             if (it->second.values_.size() > 0) {
-                return it->second.values_[0];
+                return impl::parse<T>(it->second.values_[0]);
             }
         }
         return std::nullopt;
     }
 
-    bool get_flag(const std::string& id) const { return args_.find(id) != args_.end(); }
+    bool get_flag(const std::string& id) const { return get_one<bool>(id).value(); }
+
+    bool contains(const std::string& id) const {
+        if (auto it = args_.find(id); it != args_.end()) {
+            if (it->second.values_.size() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
   private:
     std::unordered_map<std::string, MatchedArg> args_;
@@ -73,6 +99,21 @@ class Arg {
         return *this;
     }
 
+    Arg& action(ArgAction action) {
+        action_ = action;
+        if (action == ArgAction::SetTrue) {
+            default_value_ = "false";
+        } else if (action == ArgAction::SetFalse) {
+            default_value_ = "true";
+        }
+        return *this;
+    }
+
+    Arg& display_order(int order) {
+        display_order_ = order;
+        return *this;
+    }
+
     std::string get_help() const {
         if (help_) {
             return *help_;
@@ -101,6 +142,8 @@ class Arg {
     std::optional<std::string> value_name_{};
     std::optional<std::string> help_{};
     bool required_{};
+    ArgAction action_{ArgAction::Set};
+    int display_order_{0};
 
     friend class Command;
 };
@@ -111,6 +154,13 @@ class Command {
 
     Command& help(std::string s) {
         help_ = std::move(s);
+
+        args_.push_back(Arg("help")
+                            .short_name('h')
+                            .long_name("help")
+                            .help("Print help")
+                            .action(ArgAction::Help));
+
         return *this;
     }
 
@@ -119,7 +169,7 @@ class Command {
         return *this;
     }
 
-    ArgMatches get_matches(std::size_t argc, char* const* argv);
+    ArgMatches get_matches(std::size_t argc, char* const* argv) const;
 
   private:
     void print_help() const;

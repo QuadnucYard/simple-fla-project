@@ -58,7 +58,9 @@ void run_pda(const fla::Cli& cli) {
         std::cout << "The PDA looks good\n";
         return;
     }
-    fla::pda::Simulator sim{pda, std::cout, std::cerr, cli.verbose};
+    fla::pda::Simulator sim{
+        pda, std::cout, std::cerr,
+        fla::pda::Simulator::Config{.verbose = cli.verbose, .rich = cli.rich, .limit = cli.limit}};
     auto res = sim(cli.input ? *cli.input : get_stdin());
     if (!res) {
         std::exit(1);

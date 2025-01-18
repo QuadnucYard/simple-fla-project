@@ -20,7 +20,7 @@ struct Cli {
         return Cli{
             .path = matches.get_one<std::string>("path").value(),
             .input = matches.get_one<std::string>("input"),
-            .limit = matches.get_one<uint32_t>("limit").value_or(1000000),
+            .limit = matches.get_one<uint32_t>("limit").value_or(10000000),
             .check = matches.get_flag("check"),
             .debug = matches.get_flag("debug"),
             .verbose = matches.get_flag("verbose"),

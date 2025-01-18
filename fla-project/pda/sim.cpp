@@ -7,6 +7,8 @@
 namespace fla::pda {
 
 expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
+    auto verbose = config.verbose;
+
     if (auto res = pda.validate_input(input); !res) {
         if (!verbose) {
             err << "illegal input\n";
@@ -32,6 +34,7 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
     stack.push_back(pda.start_symbol);
 
     std::size_t cursor{};
+    std::uint32_t step{};
 
     auto print_state = [&]() {
         out << "|- " << state << ": ";
@@ -53,6 +56,7 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
         auto c = cursor < input.size() ? input[cursor] : Pda::NULL_SYMBOL;
         auto top = stack.empty() ? Pda::NULL_SYMBOL : stack.back();
         if (auto tr = pda.transit(state, c, top)) {
+            step++;
             state = (*tr)->second.new_state;
             if ((*tr)->first.input != Pda::NULL_SYMBOL) {
                 cursor++;
@@ -72,6 +76,9 @@ expected<bool, SimulationError> Simulator::operator()(std::string_view input) {
                     << symbol_display(top) << "\n";
             }
             return false;
+        }
+        if (step >= config.limit) {
+            break;
         }
     }
 

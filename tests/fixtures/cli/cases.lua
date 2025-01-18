@@ -60,6 +60,12 @@ function main()
             input      = "aaabb",
             args       = { "-v", "-r" },
         },
+        {
+            name       = "pda-anbn-lv",
+            input_file = "anbn.pda",
+            input      = "aaabbbb",
+            args       = { "-l", "5", "-v" },
+        },
         --
         {
             name = "tm-erroneous-1",
@@ -132,6 +138,12 @@ function main()
             input_file = "palindrome.tm",
             input      = "1001001",
             args       = { "-v", "-r" },
+        },
+        {
+            name       = "tm-palindrome-lv",
+            input_file = "palindrome.tm",
+            input      = "1001001",
+            args       = { "-l", "10", "-v" },
         }
     }
 end

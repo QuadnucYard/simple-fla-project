@@ -216,8 +216,9 @@ void Command::print_usage(bool err) const {
             << ":"
                "\x1b[0m"
                "\n";
-        auto w = std::reduce(entries.begin(), entries.end(), (std::size_t)0,
-                             [](auto x, Entry& e) { return std::max(x, e.name.length()); });
+        auto w =
+            std::accumulate(entries.begin(), entries.end(), (std::size_t)0,
+                            [](auto x, const Entry& e) { return std::max(x, e.name.length()); });
         for (auto&& entry : entries) {
             out << "  " << std::left << std::setw(w + 2) << entry.name << entry.help << "\n";
         }

@@ -174,7 +174,7 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
                 out << "Head" << i << "  : ";
                 for (size_t i = 0; i < tape.cursor; i++) {
                     auto pos = std::abs(tape.pos(i));
-                    out << std::setw(print_width(pos)) << " ";
+                    out << std::right << std::setw(print_width(pos) + 1) << " ";
                 }
                 out << "^";
                 out << '\n';

@@ -1,0 +1,36 @@
+---
+input_file: tests/fixtures/cli/assets/undeclared.pda
+info:
+  args: [-c, -v]
+---
+----- stdout -----
+
+----- stderr -----
+[1;31merror:[0m the PDA is erroneous
+error: start state `` is not in the state set
+error: no final state is provided
+error: start symbol `2` is not in the stack alphabet
+error: old state `q2` in the transition is not in the state set
+error: stack symbol `z` in the transition is not in the stack alphabet
+error: new state `accept` in the transition is not in the state set
+error: old state `q2` in the transition is not in the state set
+error: input symbol `b` in the transition is not in the input alphabet
+error: stack symbol `1` in the transition is not in the stack alphabet
+error: new state `q2` in the transition is not in the state set
+error: old state `q1` in the transition is not in the state set
+error: input symbol `b` in the transition is not in the input alphabet
+error: stack symbol `1` in the transition is not in the stack alphabet
+error: new state `q2` in the transition is not in the state set
+error: old state `q1` in the transition is not in the state set
+error: input symbol `a` in the transition is not in the input alphabet
+error: stack symbol `1` in the transition is not in the stack alphabet
+error: new state `q1` in the transition is not in the state set
+error: stack symbol `1` in the transition is not in the stack alphabet
+error: stack symbol `1` in the transition is not in the stack alphabet
+error: old state `q0` in the transition is not in the state set
+error: input symbol `a` in the transition is not in the input alphabet
+error: stack symbol `z` in the transition is not in the stack alphabet
+error: new state `q1` in the transition is not in the state set
+error: stack symbol `z` in the transition is not in the stack alphabet
+error: stack symbol `1` in the transition is not in the stack alphabet
+

@@ -1,0 +1,11 @@
+---
+input_file: tests/fixtures/cli/assets/anbn.pda
+info:
+  input: aaabb
+  args: [-c]
+---
+----- stdout -----
+The PDA looks good
+
+----- stderr -----
+

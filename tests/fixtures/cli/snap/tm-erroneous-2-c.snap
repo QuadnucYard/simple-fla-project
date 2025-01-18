@@ -1,0 +1,10 @@
+---
+input_file: tests/fixtures/cli/assets/erroneous-2.tm
+info:
+  args: [-c]
+---
+----- stdout -----
+
+----- stderr -----
+syntax error
+

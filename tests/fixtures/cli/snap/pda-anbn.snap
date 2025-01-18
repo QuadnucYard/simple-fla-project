@@ -1,0 +1,10 @@
+---
+input_file: tests/fixtures/cli/assets/anbn.pda
+info:
+  input: aaabb
+---
+----- stdout -----
+false
+
+----- stderr -----
+

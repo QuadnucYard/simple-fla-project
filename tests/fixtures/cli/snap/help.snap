@@ -1,0 +1,25 @@
+---
+info:
+  args: [-h]
+---
+----- stdout -----
+fla
+A CLI tool to parse and simulate PDA or TM
+
+[0;4;1mUsage:[0m fla[EXE] <PATH> [INPUT]
+
+[0;1mArguments:[0m
+  PATH   Path to the PDA/TM syntax file. Must end with `.pda` or `.tm`
+  INPUT  Input for the PDA or TM. Reads from stdin if not provided
+
+[0;1mOptions:[0m
+  -l, --limit    Limit of simulation steps
+  -c, --check    Check the grammar of the syntax file
+  -d, --debug    Print the parameters of the PDA/TM
+  -v, --verbose  Display the entire simulation process in details
+  -r, --rich     Enable rich style output
+  -h, --help     Print help
+
+
+----- stderr -----
+

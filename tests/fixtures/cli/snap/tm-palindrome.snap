@@ -1,0 +1,10 @@
+---
+input_file: tests/fixtures/cli/assets/palindrome.tm
+info:
+  input: 1001001
+---
+----- stdout -----
+true
+
+----- stderr -----
+

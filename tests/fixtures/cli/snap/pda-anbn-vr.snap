@@ -1,0 +1,20 @@
+---
+input_file: tests/fixtures/cli/assets/anbn.pda
+info:
+  input: aaabb
+  args: [-v, -r]
+---
+----- stdout -----
+Input: aaabb
+==================== RUN ====================
+|- q0: z - aaabb
+|- q1: z1 - aabb
+|- q1: z11 - abb
+|- q1: z111 - bb
+|- q2: z11 - b
+|- q2: z1 - 
+no trans for q2, _, 1
+false
+
+----- stderr -----
+

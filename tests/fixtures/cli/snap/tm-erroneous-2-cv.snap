@@ -1,0 +1,10 @@
+---
+input_file: tests/fixtures/cli/assets/erroneous-2.tm
+info:
+  args: [-c, -v]
+---
+----- stdout -----
+
+----- stderr -----
+[1;31merror:[0m failed to parse model: illegal syntax on line 1: `#Q = {`
+

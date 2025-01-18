@@ -1,0 +1,9 @@
+---
+input_file: tests/fixtures/cli/assets/undeclared.tm
+info:
+---
+----- stdout -----
+
+----- stderr -----
+syntax error
+

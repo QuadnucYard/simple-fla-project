@@ -1,0 +1,11 @@
+---
+input_file: tests/fixtures/cli/assets/palindrome.tm
+info:
+  input: 1001001
+  args: [-c, -v]
+---
+----- stdout -----
+The TM looks good
+
+----- stderr -----
+

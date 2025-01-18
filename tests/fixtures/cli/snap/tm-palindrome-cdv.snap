@@ -1,0 +1,51 @@
+---
+input_file: tests/fixtures/cli/assets/palindrome.tm
+info:
+  input: 1001001
+  args: [-c, -d, -v]
+---
+----- stdout -----
+[Turing Machine]
+States (Q):            {reject5, reject4, reject3, reject2, accept3, accept4, reject, 0, halt_reject, accept, halt_accept, mh, accept2, cmp, cp}
+Input symbols (Sigma): {1, 0}
+Tape symbols (Gamma):  {l, a, f, e, t, u, _, 0, r, s, 1}
+Start state (q0):      0
+Blank symbol (B):      _
+Final states (F):      {halt_accept}
+Tape number (N):       2
+Transitions:
+    reject5 -> halt_reject, __ / e_, HH
+    reject4 -> reject5, __ / s_, RH
+    reject2 -> reject3, __ / a_, RH
+    accept3 -> accept4, __ / u_, RH
+    accept4 -> halt_accept, __ / e_, HH
+    reject -> reject, 00 / __, RL
+    reject -> reject, 01 / __, RL
+    reject -> reject, 10 / __, RL
+    reject -> reject, 11 / __, RL
+    reject -> reject2, __ / f_, RH
+    0 -> cp, 0_ / 0_, HH
+    0 -> cp, 1_ / 1_, HH
+    0 -> accept, __ / __, HH
+    accept -> accept2, __ / t_, RH
+    mh -> mh, 00 / 00, LH
+    mh -> mh, 01 / 01, LH
+    mh -> mh, 10 / 10, LH
+    mh -> mh, 11 / 11, LH
+    mh -> cmp, _0 / _0, RH
+    mh -> cmp, _1 / _1, RH
+    accept2 -> accept3, __ / r_, RH
+    cmp -> cmp, 00 / __, RL
+    cmp -> reject, 01 / __, RL
+    cmp -> reject, 10 / __, RL
+    cmp -> cmp, 11 / __, RL
+    cmp -> accept, __ / __, HH
+    reject3 -> reject4, __ / l_, RH
+    cp -> cp, 0_ / 00, RR
+    cp -> cp, 1_ / 11, RR
+    cp -> mh, __ / __, LL
+
+The TM looks good
+
+----- stderr -----
+

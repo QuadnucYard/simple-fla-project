@@ -20,10 +20,14 @@ target("test_cases")
     set_rundir(os.projectdir())
     on_load(function (target)
         import("parse_testcases")
-        local testcases = parse_testcases(io.readfile("tests/fixtures/testcases.txt"))
+        local cases_path = "tests/fixtures/core/testcases.txt"
+        local testcases = {}
+        if os.exists(cases_path) then
+            testcases = parse_testcases(io.readfile(cases_path))
+        end
         for i, case in ipairs(testcases) do
             target:add("tests", string.format("case-%02d", i), {
-                runargs = {path.join("tests/fixtures/assets", case.source), case.input},
+                runargs = {path.join("tests/fixtures/core/assets", case.source), case.input},
                 pass_outputs = case.output,
                 trim_output = true,
                 run_timeout = 1000,

@@ -3,6 +3,7 @@
 #include "../utils/str.hpp"
 #include "tm.hpp"
 
+#include <algorithm>
 #include <regex>
 #include <string>
 #include <vector>
@@ -77,6 +78,18 @@ Tm Parser::parse() {
         } else {
             throw SyntaxError{concat("illegal syntax on line ", scanner.line(), ": `", *line, "`")};
         }
+    }
+
+    // sort transitions, ensure low priority for wildcard
+    for (auto&& [_, trs] : tm.transitions) {
+        std::stable_sort(trs.begin(), trs.end(), [](const Transition& a, const Transition& b) {
+            return std::lexicographical_compare(
+                a.old_symbols.begin(), a.old_symbols.end(), b.old_symbols.begin(),
+                b.old_symbols.end(), [](Symbol x, Symbol y) {
+                    return x != Transition::WILDCARD_SYMBOL &&
+                           (y == Transition::WILDCARD_SYMBOL || x < y);
+                });
+        });
     }
 
     return tm;

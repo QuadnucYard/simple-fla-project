@@ -9,7 +9,7 @@ info:
 [1;31merror:[0m the PDA is erroneous
 error: start state `` is not in the state set
 error: no final state is provided
-error: start symbol `2` is not in the stack alphabet
+error: start symbol `_` is not in the stack alphabet
 error: old state `q2` in the transition is not in the state set
 error: stack symbol `z` in the transition is not in the stack alphabet
 error: new state `accept` in the transition is not in the state set

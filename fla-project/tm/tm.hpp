@@ -50,14 +50,14 @@ struct Tm {
     using TransitionList = std::vector<Transition>;
     using TransitionMap = std::unordered_map<State, TransitionList>;
 
-    StateSet states;
-    SymbolSet input_symbols;
-    SymbolSet tape_symbols;
-    Symbol blank_symbol;
-    State start_state;
-    StateSet final_states;
+    StateSet states{};
+    SymbolSet input_symbols{};
+    SymbolSet tape_symbols{};
+    Symbol blank_symbol{};
+    State start_state{};
+    StateSet final_states{};
     std::size_t tape_num{1};
-    TransitionMap transitions;
+    TransitionMap transitions{};
 
     bool has_state(const State& state) const { return states.find(state) != states.end(); }
 

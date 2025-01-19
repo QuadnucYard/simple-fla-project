@@ -30,7 +30,8 @@ expected<bool, std::vector<std::string>> Pda::validate_self() const {
         }
     }
     if (!has_stack_symbol(start_symbol)) {
-        errors.push_back(concat("start symbol `", start_symbol, "` is not in the stack alphabet"));
+        errors.push_back(concat("start symbol `", symbol_display(start_symbol),
+                                "` is not in the stack alphabet"));
     }
     for (auto&& [tk, tv] : transitions) {
         if (!has_state(tk.old_state)) {
@@ -38,10 +39,10 @@ expected<bool, std::vector<std::string>> Pda::validate_self() const {
                 concat("old state `", tk.old_state, "` in the transition is not in the state set"));
         }
         if (!has_input_symbol(tk.input)) {
-            errors.push_back(concat("input symbol `", tk.input,
+            errors.push_back(concat("input symbol `", symbol_display(tk.input),
                                     "` in the transition is not in the input alphabet"));
         }
-        if (!has_stack_symbol(tk.old_stack_top)) {
+        if (tk.old_stack_top != NULL_SYMBOL && !has_stack_symbol(tk.old_stack_top)) {
             errors.push_back(concat("stack symbol `", tk.old_stack_top,
                                     "` in the transition is not in the stack alphabet"));
         }
@@ -51,7 +52,7 @@ expected<bool, std::vector<std::string>> Pda::validate_self() const {
         }
         for (auto sym : tv.push_symbols) {
             if (!has_stack_symbol(sym)) {
-                errors.push_back(concat("stack symbol `", sym,
+                errors.push_back(concat("stack symbol `", symbol_display(sym),
                                         "` in the transition is not in the stack alphabet"));
             }
         }

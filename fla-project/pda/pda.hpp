@@ -54,13 +54,13 @@ struct Pda {
 
     static constexpr Symbol NULL_SYMBOL = {};
 
-    StateSet states;
-    SymbolSet input_symbols;
-    SymbolSet stack_symbols;
-    State start_state;
-    Symbol start_symbol;
-    StateSet final_states;
-    TransitionMap transitions;
+    StateSet states{};
+    SymbolSet input_symbols{};
+    SymbolSet stack_symbols{};
+    State start_state{};
+    Symbol start_symbol{};
+    StateSet final_states{};
+    TransitionMap transitions{};
 
     bool has_state(const State& state) const { return states.find(state) != states.end(); }
 
@@ -69,7 +69,7 @@ struct Pda {
     }
 
     bool has_stack_symbol(Symbol symbol) const {
-        return symbol == NULL_SYMBOL || stack_symbols.find(symbol) != stack_symbols.end();
+        return stack_symbols.find(symbol) != stack_symbols.end();
     }
 
     bool is_final(const State& state) const {

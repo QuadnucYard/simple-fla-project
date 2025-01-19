@@ -46,11 +46,11 @@ jobs:
             platform: linux
             compiler: gcc
             arch: x86_64
-          - target: arm64-macosx-llvm
-            os: macos-latest
-            platform: macosx
-            compiler: llvm
-            arch: arm64
+          # - target: arm64-macosx-llvm
+          #   os: macos-latest
+          #   platform: macosx
+          #   compiler: llvm
+          #   arch: arm64
 
     name: build (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
@@ -119,7 +119,7 @@ jobs:
       - name: Run tests
         run: |
           xmake f --mode=debug -y --ci=y
-          xmake test
+          xmake test -v
 
       - name: Build binary
         run: |

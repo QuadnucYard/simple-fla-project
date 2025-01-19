@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-using svmatch = std::match_results<std::string_view::const_iterator>;
-
 namespace fla::tm {
 
 Symbol as_symbol(std::string_view s) {
@@ -30,31 +28,31 @@ Tm Parser::parse() {
     static const std::regex delta_regex{R"(^(\w+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\w+)\s*$)"};
 
     Tm tm;
+    std::match_results<std::string_view::const_iterator> match;
     while (auto line = scanner.next_line()) {
-        if (svmatch match; std::regex_search(line->begin(), line->end(), match, q_regex)) {
+        if (std::regex_search(line->begin(), line->end(), match, q_regex)) {
             for (auto q : comma_separated(match[1])) {
                 tm.states.insert(std::string{q});
             }
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, s_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, s_regex)) {
             for (auto s : comma_separated(match[1])) {
                 tm.input_symbols.insert(as_symbol(s));
             }
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, g_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, g_regex)) {
             for (auto s : comma_separated(match[1])) {
                 tm.tape_symbols.insert(as_symbol(s));
             }
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, q0_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, q0_regex)) {
             tm.start_state = match[1];
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, b_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, b_regex)) {
             tm.blank_symbol = as_symbol(match[1].str());
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, f_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, f_regex)) {
             for (auto q : comma_separated(match[1])) {
                 tm.final_states.insert(std::string{q});
             }
-        } else if (svmatch match; std::regex_search(line->begin(), line->end(), match, n_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, n_regex)) {
             tm.tape_num = std::stoi(match[1]);
-        } else if (svmatch match;
-                   std::regex_search(line->begin(), line->end(), match, delta_regex)) {
+        } else if (std::regex_search(line->begin(), line->end(), match, delta_regex)) {
             Transition tr;
             tr.old_state = match[1];
             tr.new_state = match[5];

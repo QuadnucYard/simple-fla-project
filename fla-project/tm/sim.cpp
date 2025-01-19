@@ -143,10 +143,10 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
             if (rich) out << "\x1b[38;5;28m";
             out << "Index" << i << " : ";
             if (rich) out << "\x1b[0m";
-            for (size_t i = 0; i < tape.tape.size(); i++) {
-                auto pos = std::abs(tape.pos(i));
+            for (size_t j = 0; j < tape.tape.size(); j++) {
+                auto pos = std::abs(tape.pos(j));
                 if (rich) {
-                    if (rich && i == tape.cursor) out << "\x1b[1;4;38;5;34m";
+                    if (rich && j == tape.cursor) out << "\x1b[1;4;38;5;34m";
                     else out << "\x1b[38;5;36m";
                 }
                 out << pos;
@@ -158,13 +158,13 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
             if (rich) out << "\x1b[38;5;178m";
             out << "Tape" << i << "  : ";
             if (rich) out << "\x1b[0m";
-            for (size_t i = 0; i < tape.tape.size(); i++) {
-                auto pos = std::abs(tape.pos(i));
+            for (size_t j = 0; j < tape.tape.size(); j++) {
+                auto pos = std::abs(tape.pos(j));
                 if (rich) {
-                    if (rich && i == tape.cursor) out << "\x1b[38;5;208m";
+                    if (rich && j == tape.cursor) out << "\x1b[38;5;208m";
                     else out << "\x1b[38;5;220m";
                 }
-                out << std::left << std::setw(print_width(pos)) << tape.tape[i];
+                out << std::left << std::setw(print_width(pos)) << tape.tape[j];
                 if (rich) out << "\x1b[0m";
                 out << ' ';
             }
@@ -172,8 +172,8 @@ expected<std::string, SimulationError> Simulator::operator()(std::string_view in
 
             if (!rich) {
                 out << "Head" << i << "  : ";
-                for (size_t i = 0; i < tape.cursor; i++) {
-                    auto pos = std::abs(tape.pos(i));
+                for (size_t j = 0; j < tape.cursor; j++) {
+                    auto pos = std::abs(tape.pos(j));
                     out << std::right << std::setw(print_width(pos) + 1) << " ";
                 }
                 out << "^";

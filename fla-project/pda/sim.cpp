@@ -1,6 +1,7 @@
 #include "sim.hpp"
 #include "pda.hpp"
 #include "utils/expected.hpp"
+#include <cstdint>
 #include <deque>
 #include <iomanip>
 

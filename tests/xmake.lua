@@ -94,8 +94,16 @@ target("test_cli")
         snap_text = ("---\n%s---\n----- stdout -----\n%s\n----- stderr -----\n%s\n"):format(snap_text, outdata, errdata)
 
         local snap_path = path.join(snap_folder, opt.name..".snap")
+        if os.exists(snap_path) then
+            local old_snap_text = io.readfile(snap_path)
+            if old_snap_text == snap_text then
+                return true
+            end
+        end
         io.writefile(snap_path, snap_text)
-        return true
+        print("snapshot changed: "..snap_path)
+        print(snap_text)
+        return false
 
         -- failed
         -- return false, errors

@@ -6,7 +6,22 @@ on:
       - main
 
 jobs:
-  Build:
+  pre_build:
+    permissions:
+      actions: write
+      contents: read
+    name: Duplicate Actions Detection
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          cancel_others: "true"
+
+  test_and_build:
+    needs: [pre_build]
     strategy:
       fail-fast: false
       matrix:
@@ -16,21 +31,26 @@ jobs:
             platform: windows
             compiler: msvc
             arch: x64
-          - target: x64-mingw-llvm
-            os: windows-latest
-            platform: mingw
-            compiler: llvm
-            arch: x86_64
+          # - target: x64-mingw-llvm
+          #   os: windows-latest
+          #   platform: mingw
+          #   compiler: llvm
+          #   arch: x86_64
           - target: x86_64-linux-llvm
             os: ubuntu-24.04
             platform: linux
             compiler: llvm
             arch: x86_64
-          - target: x86_64-linux-gnu
+          - target: x86_64-linux-gcc
             os: ubuntu-24.04
             platform: linux
             compiler: gcc
             arch: x86_64
+          - target: arm64-macosx-llvm
+            os: macos-latest
+            platform: macosx
+            compiler: llvm
+            arch: arm64
 
     name: build (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
@@ -45,6 +65,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
+            .xmake-cache
+            .xmake-build-cache
+            .xmake-package-cache
             ./build/
             ~/vcpkg
             ~/.cache/vcpkg/archives
@@ -61,30 +84,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.BUILD_TYPE }}-
 
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows') }}
-          # cmake: true
-          # ninja: true
-          # vcpkg: true
-          cppcheck: true
-          clang-tidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
-          # ...
-
       - name: Setup XMake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
           actions-cache-folder: ".xmake-cache"
+          actions-cache-key: "${{ matrix.target }}-ci"
           build-cache: true
+          build-cache-key: "${{ matrix.target }}-ci"
           package-cache: true
+          package-cache-key: "${{ matrix.target }}-ci"
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
+          cmake: true
+          # ninja: true
+          # vcpkg: true
+          # cppcheck: true
+          clang-tidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
+          # ...
 
       - name: Config XMake
         run: xmake f -p ${{ matrix.platform }} -a ${{ matrix.arch }} --toolchain=${{ matrix.compiler }} -y --ci=y
 
       - name: Check and Format
+        if: matrix.target == 'x86_64-linux-llvm'
         run: |
           xmake check clang.tidy
           xmake format

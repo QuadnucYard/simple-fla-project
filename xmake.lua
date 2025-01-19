@@ -1,24 +1,27 @@
+set_project("simple-fla")
+set_version("0.1.0")
+
 option("submit")
 option_end()
-
-local is_submit = has_config("submit")
+option("ci")
+option_end()
 
 add_rules("mode.debug", "mode.release")
 
-if is_os("windows") then
-    set_plat("mingw")
-    set_toolchains("llvm")
-elseif is_os("linux") then
-    set_plat("linux")
-    set_toolchains("gcc")
+if has_config("ci") then
+    set_languages("c++latest")
+else
+    set_languages("c++17")
 end
-
-set_languages("c++17")
 set_warnings("allextra")
 
+local is_submit = has_config("submit")
+
 if not is_submit then
-    set_policy("build.sanitizer.address", true)
-    set_policy("build.sanitizer.undefined", true)
+    if is_mode("debug") then
+        set_policy("build.sanitizer.address", true)
+        set_policy("build.sanitizer.undefined", true)
+    end
 
     add_requires("catch2")
 end

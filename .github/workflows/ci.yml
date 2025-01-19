@@ -1,0 +1,110 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x64-windows-msvc
+            os: windows-latest
+            platform: windows
+            compiler: msvc
+            arch: x64
+          - target: x64-mingw-llvm
+            os: windows-latest
+            platform: mingw
+            compiler: llvm
+            arch: x86_64
+          - target: x86_64-linux-llvm
+            os: ubuntu-24.04
+            platform: linux
+            compiler: llvm
+            arch: x86_64
+          - target: x86_64-linux-gnu
+            os: ubuntu-24.04
+            platform: linux
+            compiler: gcc
+            arch: x86_64
+
+    name: build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+
+    env:
+      BIN_EXT: ${{ fromJSON('["", ".exe"]')[matrix.platform == 'windows' || matrix.platform == 'mingw'] }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./build/
+            ~/vcpkg
+            ~/.cache/vcpkg/archives
+            ${{ env.LOCALAPPDATA }}/vcpkg/archives
+            ${{ env.APPDATA }}/vcpkg/archives
+            ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+            ~/.cache/ccache
+            ~/.ccache
+            ~/.config/ccache
+            ~/Library/Caches/ccache
+            ${{ env.LOCALAPPDATA }}/ccache
+            ${{ env.XDG_CACHE_HOME }}/ccache
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: ${{ matrix.compiler }}
+          vcvarsall: ${{ contains(matrix.os, 'windows') }}
+          # cmake: true
+          # ninja: true
+          # vcpkg: true
+          cppcheck: true
+          clang-tidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
+          # ...
+
+      - name: Setup XMake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+          actions-cache-folder: ".xmake-cache"
+          build-cache: true
+          package-cache: true
+
+      - name: Config XMake
+        run: xmake f -p ${{ matrix.platform }} -a ${{ matrix.arch }} --toolchain=${{ matrix.compiler }} -y --ci=y
+
+      - name: Check and Format
+        run: |
+          xmake check clang.tidy
+          xmake format
+
+      - name: Run tests
+        run: |
+          xmake f --mode=debug -y --ci=y
+          xmake test
+
+      - name: Build binary
+        run: |
+          xmake f --mode=release -y --ci=y
+          xmake build
+
+      - name: Copy binary to output directory
+        run: |
+          cp "build/${{ matrix.platform }}/${{ matrix.arch }}/release/fla${{ env.BIN_EXT }}" "fla-${{ matrix.target }}${{ env.BIN_EXT }}"
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fla-${{ matrix.target }}
+          path: fla-${{ matrix.target }}${{ env.BIN_EXT }}

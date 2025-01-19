@@ -128,7 +128,8 @@ class Arg {
             return *value_name_;
         }
         auto s = id_;
-        std::transform(s.begin(), s.end(), s.begin(), [](auto c) { return std::toupper(c); });
+        std::transform(s.begin(), s.end(), s.begin(),
+                       [](auto c) { return static_cast<char>(std::toupper(c)); });
         return s;
     }
 

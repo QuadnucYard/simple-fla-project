@@ -7,25 +7,13 @@ info:
 
 ----- stderr -----
 [1;31merror:[0m the TM is erroneous
-error: start state `` is not in the state set
-error: final state `halt_accept` is not in the state set
 error: blank symbol `_` is not in the tape alphabet
-error: old state `0` in the transition is not in the state set
-error: new state `cp` in the transition is not in the state set
-error: tape symbol `0` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: tape symbol `0` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: old state `0` in the transition is not in the state set
-error: new state `cp` in the transition is not in the state set
-error: tape symbol `1` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: tape symbol `1` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: old state `0` in the transition is not in the state set
+error: final state `halt_accept` is not in the state set
 error: new state `accept` in the transition is not in the state set
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
-error: tape symbol `_` in the transition is not in the tape alphabet
+error: new state `cp` in the transition is not in the state set
+error: old state `0` in the transition is not in the state set
+error: start state `` is not in the state set
+error: tape symbol `0` in the transition is not in the tape alphabet
+error: tape symbol `1` in the transition is not in the tape alphabet
 error: tape symbol `_` in the transition is not in the tape alphabet
 

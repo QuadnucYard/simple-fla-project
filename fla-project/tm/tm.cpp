@@ -1,7 +1,9 @@
 #include "tm.hpp"
+#include "../utils/display.hpp"
 #include "../utils/str.hpp"
+#include "utils/ordered.hpp"
 #include <algorithm>
-#include <unordered_set>
+#include <vector>
 
 namespace fla::tm {
 
@@ -116,6 +118,8 @@ expected<bool, std::vector<std::string>> Tm::validate_self() const {
     if (errors.empty()) {
         return true;
     } else {
+        std::sort(errors.begin(), errors.end());
+        errors.erase(std::unique(errors.begin(), errors.end()), errors.end());
         return unexpected{errors};
     }
 }
@@ -144,21 +148,10 @@ std::ostream& operator<<(std::ostream& os, const std::vector<Move>& moves) {
     return os;
 }
 
-template <class T>
-std::ostream& operator<<(std::ostream& os, const std::unordered_set<T>& set) {
-    os << "{";
-    auto it = set.begin();
-    if (it != set.end()) {
-        os << *it++;
-    }
-    while (it != set.end()) {
-        os << ", " << *it++;
-    }
-    os << "}";
-    return os;
-}
-
 std::ostream& operator<<(std::ostream& os, const Tm& tm) {
+    using fla::operator<<;
+    using fla::tm::operator<<;
+
     os << "[Turing Machine]\n";
     os << "States (Q):            " << tm.states << "\n";
     os << "Input symbols (Sigma): " << tm.input_symbols << "\n";
@@ -168,7 +161,7 @@ std::ostream& operator<<(std::ostream& os, const Tm& tm) {
     os << "Final states (F):      " << tm.final_states << "\n";
     os << "Tape number (N):       " << tm.tape_num << "\n";
     os << "Transitions:\n";
-    for (auto&& [_, v] : tm.transitions) {
+    for (auto&& [_, v] : to_ordered(tm.transitions)) {
         for (auto&& tr : v) {
             os << "    " << tr.old_state << " -> " << tr.new_state << ", " << tr.old_symbols
                << " / " << tr.new_symbols << ", " << tr.moves << "\n";

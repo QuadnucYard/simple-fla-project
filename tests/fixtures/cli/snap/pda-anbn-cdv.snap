@@ -6,18 +6,18 @@ info:
 ---
 ----- stdout -----
 [Deterministic Pushdown Automata]
-States (Q):              {accept, q2, q1, q0}
-Input symbols (Sigma):   {b, a}
-Stack symbols (Gamma):   {z, 1, 0}
+States (Q):              {accept, q0, q1, q2}
+Input symbols (Sigma):   {a, b}
+Stack symbols (Gamma):   {0, 1, z}
 Start state (q0):        q0
 Start stack symbol (Z0): z
 Final states (F):        {accept}
 Transitions:
+    delta(q0, a, z) = (q1, z1)
+    delta(q1, a, 1) = (q1, 11)
+    delta(q1, b, 1) = (q2, )
     delta(q2, _, z) = (accept, )
     delta(q2, b, 1) = (q2, )
-    delta(q1, b, 1) = (q2, )
-    delta(q1, a, 1) = (q1, 11)
-    delta(q0, a, z) = (q1, z1)
 
 The PDA looks good
 

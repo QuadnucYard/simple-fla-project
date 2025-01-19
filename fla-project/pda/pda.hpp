@@ -25,6 +25,10 @@ struct TransitionKey {
         return old_state == rhs.old_state && input == rhs.input &&
                old_stack_top == rhs.old_stack_top;
     }
+
+    bool operator<(const TransitionKey& rhs) const {
+        return old_state < rhs.old_state || (old_state == rhs.old_state && input < rhs.input);
+    }
 };
 
 struct TransitionValue {

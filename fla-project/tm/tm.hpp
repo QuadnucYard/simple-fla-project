@@ -5,6 +5,7 @@
 #include <ostream>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -38,6 +39,11 @@ struct Transition {
     std::vector<Move> moves;
 
     bool matches(const State& state, const SymbolVec& peek_symbols) const;
+
+    bool operator<(const Transition& rhs) const {
+        return std::tie(old_state, new_state, old_symbols) <
+               std::tie(rhs.old_state, rhs.new_state, rhs.old_symbols);
+    }
 };
 
 } // namespace fla::tm

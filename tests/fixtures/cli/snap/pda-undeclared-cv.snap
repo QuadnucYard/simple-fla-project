@@ -7,30 +7,17 @@ info:
 
 ----- stderr -----
 [1;31merror:[0m the PDA is erroneous
-error: start state `` is not in the state set
-error: no final state is provided
-error: start symbol `_` is not in the stack alphabet
-error: old state `q2` in the transition is not in the state set
-error: stack symbol `z` in the transition is not in the stack alphabet
+error: input symbol `a` in the transition is not in the input alphabet
+error: input symbol `b` in the transition is not in the input alphabet
 error: new state `accept` in the transition is not in the state set
-error: old state `q2` in the transition is not in the state set
-error: input symbol `b` in the transition is not in the input alphabet
-error: stack symbol `1` in the transition is not in the stack alphabet
-error: new state `q2` in the transition is not in the state set
-error: old state `q1` in the transition is not in the state set
-error: input symbol `b` in the transition is not in the input alphabet
-error: stack symbol `1` in the transition is not in the stack alphabet
-error: new state `q2` in the transition is not in the state set
-error: old state `q1` in the transition is not in the state set
-error: input symbol `a` in the transition is not in the input alphabet
-error: stack symbol `1` in the transition is not in the stack alphabet
 error: new state `q1` in the transition is not in the state set
-error: stack symbol `1` in the transition is not in the stack alphabet
-error: stack symbol `1` in the transition is not in the stack alphabet
+error: new state `q2` in the transition is not in the state set
+error: no final state is provided
 error: old state `q0` in the transition is not in the state set
-error: input symbol `a` in the transition is not in the input alphabet
-error: stack symbol `z` in the transition is not in the stack alphabet
-error: new state `q1` in the transition is not in the state set
-error: stack symbol `z` in the transition is not in the stack alphabet
+error: old state `q1` in the transition is not in the state set
+error: old state `q2` in the transition is not in the state set
 error: stack symbol `1` in the transition is not in the stack alphabet
+error: stack symbol `z` in the transition is not in the stack alphabet
+error: start state `` is not in the state set
+error: start symbol `_` is not in the stack alphabet
 

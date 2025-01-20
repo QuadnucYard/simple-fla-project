@@ -90,14 +90,13 @@ cd ./build; make
 
 Testing is empowered by XMake.
 
-We have two kinds of tests:
+We have the following kinds of tests:
 
 - Test core library. Check validity and simulator output by catch2.
-- Test more cases through CLI.
+- Test more cases through CLI. The fixtures are from <https://github.com/NijikaIjichi/nju-fla-turing>.
+- Test CLI features with snapshots. Since we do not have a proper snapshot reviewer, we simply compare and update it in tests.
 
-The fixtures are from <https://github.com/NijikaIjichi/nju-fla-turing>.
-
-- Run all tests:
+Run all tests:
 
 ```sh
 xmake test
